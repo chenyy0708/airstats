@@ -136,32 +136,32 @@ extension ThresholdAlert {
 
     var title: String {
         switch metric {
-        case .cpuUsage: return "CPU usage is high"
-        case .memoryPressure: return "Memory pressure is high"
-        case .diskFree: return "Startup disk is running out of space"
-        case .batteryLow: return "Battery is low"
-        case .batteryFull: return "Battery is charged"
-        case .cpuTemperature: return "CPU is running hot"
-        case .thermalPressure: return "This Mac is under thermal pressure"
+        case .cpuUsage: return L10n.s("CPU usage is high")
+        case .memoryPressure: return L10n.s("Memory pressure is high")
+        case .diskFree: return L10n.s("Startup disk is running out of space")
+        case .batteryLow: return L10n.s("Battery is low")
+        case .batteryFull: return L10n.s("Battery is charged")
+        case .cpuTemperature: return L10n.s("CPU is running hot")
+        case .thermalPressure: return L10n.s("This Mac is under thermal pressure")
         }
     }
 
     var body: String {
         switch metric {
         case .cpuUsage:
-            return "CPU is at \(percent(value)), above your \(percent(threshold)) threshold."
+            return L10n.format("CPU is at %@, above your %@ threshold.", percent(value), percent(threshold))
         case .memoryPressure:
-            return "Memory pressure is at \(percent(value)), above your \(percent(threshold)) threshold."
+            return L10n.format("Memory pressure is at %@, above your %@ threshold.", percent(value), percent(threshold))
         case .diskFree:
-            return "\(gigabytes(value)) free on the startup disk, below your \(gigabytes(threshold)) threshold."
+            return L10n.format("%@ free on the startup disk, below your %@ threshold.", gigabytes(value), gigabytes(threshold))
         case .batteryLow:
-            return "Battery is at \(percent(value)), below your \(percent(threshold)) threshold."
+            return L10n.format("Battery is at %@, below your %@ threshold.", percent(value), percent(threshold))
         case .batteryFull:
-            return "Battery is at \(percent(value)). You can unplug."
+            return L10n.format("Battery is at %@. You can unplug.", percent(value))
         case .cpuTemperature:
-            return "CPU is at \(degrees(value)), above your \(degrees(threshold)) threshold."
+            return L10n.format("CPU is at %@, above your %@ threshold.", degrees(value), degrees(threshold))
         case .thermalPressure:
-            return "Thermal pressure is \(level(value)), at or past your \(level(threshold)) threshold."
+            return L10n.format("Thermal pressure is %@, at or past your %@ threshold.", level(value), level(threshold))
         }
     }
 

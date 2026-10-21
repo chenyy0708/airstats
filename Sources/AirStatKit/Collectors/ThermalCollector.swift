@@ -141,7 +141,7 @@ public final class ThermalCollector: MetricSource {
         IOObjectRelease(service)
         guard opened == kIOReturnSuccess else {
             connection = 0
-            setupFailure = String(format: "AppleSMC could not be opened (0x%08x)", opened)
+            setupFailure = L10n.format("AppleSMC could not be opened (0x%08x)", opened)
             return
         }
 
@@ -216,7 +216,7 @@ public final class ThermalCollector: MetricSource {
             // `minRPM` is the slowest speed the fan turns at *while spinning*, so a
             // stopped fan legitimately sits below it. `FanInfo.loadFraction` already
             // clamps to 0...1, so the dial reads empty rather than running backwards.
-            fanInfo.append(FanInfo(id: fan.id, name: "Fan \(fan.id + 1)", currentRPM: rpm,
+            fanInfo.append(FanInfo(id: fan.id, name: L10n.format("Fan %lld", Int64(fan.id + 1)), currentRPM: rpm,
                                    minRPM: fan.minRPM, maxRPM: fan.maxRPM))
         }
 
@@ -339,16 +339,16 @@ public final class ThermalCollector: MetricSource {
     private static func label(for category: SensorCategory, index: Int, of total: Int) -> String {
         let base: String
         switch category {
-        case .cpu: base = "CPU die"
-        case .gpu: base = "GPU die"
-        case .memory: base = "Memory"
-        case .storage: base = "Storage"
-        case .battery: base = "Battery"
-        case .ambient: base = "Enclosure"
-        case .power: base = "Power"
-        case .other: base = "Sensor"
+        case .cpu: base = L10n.s("CPU die")
+        case .gpu: base = L10n.s("GPU die")
+        case .memory: base = L10n.s("Memory")
+        case .storage: base = L10n.s("Storage")
+        case .battery: base = L10n.s("Battery")
+        case .ambient: base = L10n.s("Enclosure")
+        case .power: base = L10n.s("Power")
+        case .other: base = L10n.s("Sensor")
         }
-        return total > 1 ? "\(base) \(index + 1)" : base
+        return total > 1 ? L10n.format("%@ %lld", base, Int64(index + 1)) : base
     }
 
     /// Picks `cap` items spread across `items`, keeping the first and last.

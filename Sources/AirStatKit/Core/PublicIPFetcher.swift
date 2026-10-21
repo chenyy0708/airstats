@@ -48,7 +48,7 @@ public final class PublicIPFetcher: @unchecked Sendable {
 
     /// Said in place of an address while the feature is off, so the panel can leave the
     /// row out entirely instead of drawing an empty field.
-    public static let disabledMessage = "Public IP lookup is off"
+    public static var disabledMessage: String { L10n.s("Public IP lookup is off") }
 
     private let transport: PublicIPTransport
     private let lock = NSLock()
@@ -153,10 +153,10 @@ public final class PublicIPFetcher: @unchecked Sendable {
 
     static func interpret(data: Data?, response: URLResponse?, error: Error?) -> MetricState<String> {
         if let error {
-            return .failure(.failed("could not reach the lookup service: \(error.localizedDescription)"))
+            return .failure(.failed(L10n.format("could not reach the lookup service: %@", error.localizedDescription)))
         }
         if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
-            return .failure(.failed("the lookup service answered HTTP \(http.statusCode)"))
+            return .failure(.failed(L10n.format("the lookup service answered HTTP %lld", Int64(http.statusCode))))
         }
         guard let data, let text = String(data: data, encoding: .utf8) else {
             return .failure(.failed("the lookup service returned no address"))

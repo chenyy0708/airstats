@@ -89,7 +89,7 @@ public final class ProcessCollector: MetricSource {
         if tickSeconds == 0 { start() }
 
         guard let pidCount = listPIDs(&pidBuffer, filter: UInt32(PROC_ALL_PIDS), argument: 0) else {
-            return .failure(.failed("proc_listpids failed: \(String(cString: strerror(errno)))"))
+            return .failure(.failed(L10n.format("proc_listpids failed: %@", String(cString: strerror(errno)))))
         }
 
         // Only same-uid processes are inspectable, and PROC_UID_ONLY reproduces
@@ -99,7 +99,7 @@ public final class ProcessCollector: MetricSource {
         var ownCount = pidCount
         if euid != 0 {
             guard let own = listPIDs(&ownPIDBuffer, filter: UInt32(PROC_UID_ONLY), argument: euid) else {
-                return .failure(.failed("proc_listpids failed: \(String(cString: strerror(errno)))"))
+                return .failure(.failed(L10n.format("proc_listpids failed: %@", String(cString: strerror(errno)))))
             }
             ownCount = own
         }

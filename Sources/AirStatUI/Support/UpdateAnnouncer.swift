@@ -99,8 +99,8 @@ public final class UpdateAnnouncer {
         // away long enough to miss two releases wants the current notice, not a stack of
         // superseded ones.
         authority.post(identifier: Self.identifier,
-                       title: "AirStats \(version) is available",
-                       body: "You are running \(currentVersion). Click to install it.")
+                       title: L10n.format("AirStats %@ is available", version),
+                       body: L10n.format("You are running %@. Click to install it.", currentVersion))
         // Written after the notification is handed over rather than before, but without
         // waiting to hear it was displayed: the failure this guards against is
         // repetition, and a banner nobody saw is a far smaller loss than a weekly one.
@@ -109,6 +109,6 @@ public final class UpdateAnnouncer {
     }
 
     private var currentVersion: String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "an older version"
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? L10n.s("an older version")
     }
 }

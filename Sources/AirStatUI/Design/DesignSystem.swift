@@ -241,7 +241,7 @@ public struct ReadoutRow: View {
     private let isDimmed: Bool
 
     public init(_ label: String, _ value: String, isDimmed: Bool = false) {
-        self.label = label
+        self.label = L10n.s(label)
         self.value = value
         self.isDimmed = isDimmed
     }
@@ -317,7 +317,7 @@ public struct UnavailableNote: View {
             Spacer(minLength: 0)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Unavailable. \(failure.message)")
+        .accessibilityLabel(Text(L10n.format("Unavailable. %@", failure.message)))
     }
 
     private var symbol: String {

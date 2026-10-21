@@ -132,9 +132,9 @@ struct DesktopWidgetPane: View {
                         }
                         RowIconButton(systemName: "trash",
                                       help: desktopWidget.modules.count <= 1
-                                          ? "The desktop widget needs at least one module."
-                                          : "Remove \(module.label) from the desktop widget",
-                                      label: "Remove \(module.label)") {
+                                          ? L10n.s("The desktop widget needs at least one module.")
+                                          : L10n.format("Remove %@ from the desktop widget", module.label),
+                                      label: L10n.format("Remove %@", module.label)) {
                             settings.update { $0.desktopWidget.modules.removeAll { $0 == module } }
                         }
                         .disabled(desktopWidget.modules.count <= 1)
@@ -171,7 +171,7 @@ struct DesktopWidgetPane: View {
             .menuStyle(.borderlessButton)
             .fixedSize()
             .disabled(availableModules.isEmpty)
-            .help(availableModules.isEmpty ? "Every module is already in the desktop widget." : "")
+            .help(availableModules.isEmpty ? L10n.s("Every module is already in the desktop widget.") : "")
             .accessibilityLabel("Add a module to the desktop widget")
 
             Spacer()
@@ -203,7 +203,7 @@ struct DesktopWidgetPane: View {
     }
 
     private var savedPositionText: String {
-        guard let x = desktopWidget.originX, let y = desktopWidget.originY else { return "Not set" }
+        guard let x = desktopWidget.originX, let y = desktopWidget.originY else { return L10n.s("Not set") }
         return "\(Int(x)), \(Int(y))"
     }
 }

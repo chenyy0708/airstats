@@ -8,14 +8,14 @@ public enum CollectorID: String, Sendable, Equatable, Hashable, CaseIterable, Co
     public var label: String {
         switch self {
         case .cpu: return "CPU"
-        case .memory: return "Memory"
+        case .memory: return L10n.s("Memory")
         case .gpu: return "GPU"
-        case .network: return "Network"
-        case .disk: return "Disk"
-        case .power: return "Battery"
-        case .thermal: return "Temperature"
-        case .processes: return "Processes"
-        case .system: return "System"
+        case .network: return L10n.s("Network")
+        case .disk: return L10n.s("Disk")
+        case .power: return L10n.s("Battery")
+        case .thermal: return L10n.s("Temperature")
+        case .processes: return L10n.s("Processes")
+        case .system: return L10n.s("System")
         }
     }
 

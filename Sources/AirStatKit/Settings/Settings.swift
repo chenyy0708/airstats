@@ -23,8 +23,8 @@ public enum TemperatureUnit: String, Sendable, Codable, CaseIterable, Equatable,
 
     public var label: String {
         switch self {
-        case .celsius: return "Celsius (°C)"
-        case .fahrenheit: return "Fahrenheit (°F)"
+        case .celsius: return L10n.s("Celsius (°C)")
+        case .fahrenheit: return L10n.s("Fahrenheit (°F)")
         }
     }
     public var suffix: String {
@@ -42,8 +42,8 @@ public enum NetworkRateUnit: String, Sendable, Codable, CaseIterable, Equatable,
 
     public var label: String {
         switch self {
-        case .bytes: return "Bytes per second (MB/s)"
-        case .bits: return "Bits per second (Mbps)"
+        case .bytes: return L10n.s("Bytes per second (MB/s)")
+        case .bits: return L10n.s("Bits per second (Mbps)")
         }
     }
 }
@@ -57,8 +57,8 @@ public enum ByteUnitStyle: String, Sendable, Codable, CaseIterable, Equatable, H
 
     public var label: String {
         switch self {
-        case .binary: return "Binary (1 GB = 1024 MB)"
-        case .decimal: return "Decimal (1 GB = 1000 MB)"
+        case .binary: return L10n.s("Binary (1 GB = 1024 MB)")
+        case .decimal: return L10n.s("Decimal (1 GB = 1000 MB)")
         }
     }
     public var base: Double { self == .binary ? 1024 : 1000 }
@@ -69,9 +69,9 @@ public enum AppearanceMode: String, Sendable, Codable, CaseIterable, Equatable, 
 
     public var label: String {
         switch self {
-        case .system: return "Match System"
-        case .light: return "Light"
-        case .dark: return "Dark"
+        case .system: return L10n.s("Match System")
+        case .light: return L10n.s("Light")
+        case .dark: return L10n.s("Dark")
         }
     }
 }
@@ -91,22 +91,22 @@ public enum MenuBarMetric: String, Sendable, Codable, CaseIterable, Equatable, H
 
     public var label: String {
         switch self {
-        case .cpuUsage: return "CPU Usage"
-        case .cpuTemperature: return "CPU Temperature"
-        case .cpuFrequency: return "CPU Frequency"
-        case .memoryUsage: return "Memory Usage"
-        case .memoryPressure: return "Memory Pressure"
-        case .gpuUsage: return "GPU Usage"
-        case .networkThroughput: return "Network (Up & Down)"
-        case .networkUpload: return "Network Upload"
-        case .networkDownload: return "Network Download"
-        case .diskActivity: return "Disk Activity"
-        case .diskFree: return "Disk Free"
-        case .battery: return "Battery"
-        case .batteryTime: return "Battery Time Remaining"
-        case .systemPower: return "System Power"
-        case .fanSpeed: return "Fan Speed"
-        case .uptime: return "Uptime"
+        case .cpuUsage: return L10n.s("CPU Usage")
+        case .cpuTemperature: return L10n.s("CPU Temperature")
+        case .cpuFrequency: return L10n.s("CPU Frequency")
+        case .memoryUsage: return L10n.s("Memory Usage")
+        case .memoryPressure: return L10n.s("Memory Pressure")
+        case .gpuUsage: return L10n.s("GPU Usage")
+        case .networkThroughput: return L10n.s("Network (Up & Down)")
+        case .networkUpload: return L10n.s("Network Upload")
+        case .networkDownload: return L10n.s("Network Download")
+        case .diskActivity: return L10n.s("Disk Activity")
+        case .diskFree: return L10n.s("Disk Free")
+        case .battery: return L10n.s("Battery")
+        case .batteryTime: return L10n.s("Battery Time Remaining")
+        case .systemPower: return L10n.s("System Power")
+        case .fanSpeed: return L10n.s("Fan Speed")
+        case .uptime: return L10n.s("Uptime")
         }
     }
 
@@ -174,13 +174,13 @@ public enum MenuBarDisplayStyle: String, Sendable, Codable, CaseIterable, Equata
 
     public var label: String {
         switch self {
-        case .text: return "Text"
-        case .graph: return "Graph"
-        case .textAndGraph: return "Text & Graph"
-        case .iconAndText: return "Icon & Text"
-        case .battery: return "Battery Indicator"
-        case .statusDot: return "Status Dot"
-        case .bar: return "Compact Bar"
+        case .text: return L10n.s("Text")
+        case .graph: return L10n.s("Graph")
+        case .textAndGraph: return L10n.s("Text & Graph")
+        case .iconAndText: return L10n.s("Icon & Text")
+        case .battery: return L10n.s("Battery Indicator")
+        case .statusDot: return L10n.s("Status Dot")
+        case .bar: return L10n.s("Compact Bar")
         }
     }
 
@@ -328,14 +328,14 @@ public enum PanelModule: String, Sendable, Codable, CaseIterable, Equatable, Has
     public var label: String {
         switch self {
         case .cpu: return "CPU"
-        case .memory: return "Memory"
+        case .memory: return L10n.s("Memory")
         case .gpu: return "GPU"
-        case .network: return "Network"
-        case .disk: return "Disk"
-        case .battery: return "Battery"
-        case .thermal: return "Temperature"
-        case .processes: return "Top Processes"
-        case .system: return "System"
+        case .network: return L10n.s("Network")
+        case .disk: return L10n.s("Disk")
+        case .battery: return L10n.s("Battery")
+        case .thermal: return L10n.s("Temperature")
+        case .processes: return L10n.s("Top Processes")
+        case .system: return L10n.s("System")
         }
     }
 
@@ -448,9 +448,9 @@ public enum ChartStyle: String, Sendable, Codable, CaseIterable, Equatable, Hash
 
     public var label: String {
         switch self {
-        case .line: return "Line"
-        case .filledLine: return "Filled Line"
-        case .bars: return "Bars"
+        case .line: return L10n.s("Line")
+        case .filledLine: return L10n.s("Filled Line")
+        case .bars: return L10n.s("Bars")
         }
     }
 }
@@ -507,11 +507,11 @@ public enum DesktopWidgetCorner: String, Sendable, Codable, CaseIterable, Equata
 
     public var label: String {
         switch self {
-        case .topLeft: return "Top Left"
-        case .topRight: return "Top Right"
-        case .bottomLeft: return "Bottom Left"
-        case .bottomRight: return "Bottom Right"
-        case .free: return "Custom Position"
+        case .topLeft: return L10n.s("Top Left")
+        case .topRight: return L10n.s("Top Right")
+        case .bottomLeft: return L10n.s("Bottom Left")
+        case .bottomRight: return L10n.s("Bottom Right")
+        case .free: return L10n.s("Custom Position")
         }
     }
 }
@@ -533,17 +533,17 @@ public enum DesktopWidgetDepth: String, Sendable, Codable, CaseIterable, Equatab
 
     public var label: String {
         switch self {
-        case .aboveEverything: return "Above Everything"
-        case .withWindows: return "With Other Windows"
-        case .wallpaper: return "On the Wallpaper"
+        case .aboveEverything: return L10n.s("Above Everything")
+        case .withWindows: return L10n.s("With Other Windows")
+        case .wallpaper: return L10n.s("On the Wallpaper")
         }
     }
 
     public var detail: String {
         switch self {
-        case .aboveEverything: return "Stays visible over full-screen apps."
-        case .withWindows: return "A normal floating window."
-        case .wallpaper: return "Behind every window, on the desktop picture."
+        case .aboveEverything: return L10n.s("Stays visible over full-screen apps.")
+        case .withWindows: return L10n.s("A normal floating window.")
+        case .wallpaper: return L10n.s("Behind every window, on the desktop picture.")
         }
     }
 }
@@ -654,13 +654,13 @@ public enum ThresholdMetric: String, Sendable, Codable, CaseIterable, Equatable,
 
     public var label: String {
         switch self {
-        case .cpuUsage: return "Sustained CPU usage above"
-        case .memoryPressure: return "Memory pressure above"
-        case .diskFree: return "Startup disk free space below"
-        case .batteryLow: return "Battery drops below"
-        case .batteryFull: return "Battery reaches"
-        case .cpuTemperature: return "CPU temperature above"
-        case .thermalPressure: return "Thermal pressure reaches"
+        case .cpuUsage: return L10n.s("Sustained CPU usage above")
+        case .memoryPressure: return L10n.s("Memory pressure above")
+        case .diskFree: return L10n.s("Startup disk free space below")
+        case .batteryLow: return L10n.s("Battery drops below")
+        case .batteryFull: return L10n.s("Battery reaches")
+        case .cpuTemperature: return L10n.s("CPU temperature above")
+        case .thermalPressure: return L10n.s("Thermal pressure reaches")
         }
     }
 
@@ -789,10 +789,10 @@ public enum ShortcutAction: String, Sendable, Codable, CaseIterable, Equatable, 
 
     public var label: String {
         switch self {
-        case .togglePanel: return "Show / Hide Panel"
-        case .toggleDesktopWidget: return "Show / Hide Desktop Widget"
-        case .toggleMenuBarItem: return "Show / Hide Menu Bar Item"
-        case .openSettings: return "Open Settings"
+        case .togglePanel: return L10n.s("Show / Hide Panel")
+        case .toggleDesktopWidget: return L10n.s("Show / Hide Desktop Widget")
+        case .toggleMenuBarItem: return L10n.s("Show / Hide Menu Bar Item")
+        case .openSettings: return L10n.s("Open Settings")
         }
     }
 }

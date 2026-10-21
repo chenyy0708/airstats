@@ -155,27 +155,27 @@ public enum SeriesKey: String, Sendable, Equatable, Hashable, CaseIterable, Coda
     public var label: String {
         switch self {
         case .cpuTotal: return "CPU"
-        case .cpuUser: return "User"
-        case .cpuSystem: return "System"
-        case .cpuPerformance: return "P-Cores"
-        case .cpuEfficiency: return "E-Cores"
-        case .memoryUsed: return "Memory Used"
-        case .memoryPressure: return "Memory Pressure"
-        case .memorySwap: return "Swap"
+        case .cpuUser: return L10n.s("User")
+        case .cpuSystem: return L10n.s("System")
+        case .cpuPerformance: return L10n.s("P-Cores")
+        case .cpuEfficiency: return L10n.s("E-Cores")
+        case .memoryUsed: return L10n.s("Memory Used")
+        case .memoryPressure: return L10n.s("Memory Pressure")
+        case .memorySwap: return L10n.s("Swap")
         case .gpuUtilization: return "GPU"
-        case .gpuVRAM: return "VRAM"
-        case .networkUpload: return "Upload"
-        case .networkDownload: return "Download"
-        case .diskRead: return "Read"
-        case .diskWrite: return "Write"
-        case .diskUsed: return "Disk Used"
-        case .batteryPercent: return "Battery"
-        case .batteryWatts: return "Battery Power"
-        case .systemWatts: return "System Power"
-        case .cpuTemperature: return "CPU Temp"
-        case .gpuTemperature: return "GPU Temp"
-        case .fanRPM: return "Fan"
-        case .batteryPlugged: return "On Power"
+        case .gpuVRAM: return L10n.s("VRAM")
+        case .networkUpload: return L10n.s("Upload")
+        case .networkDownload: return L10n.s("Download")
+        case .diskRead: return L10n.s("Read")
+        case .diskWrite: return L10n.s("Write")
+        case .diskUsed: return L10n.s("Disk Used")
+        case .batteryPercent: return L10n.s("Battery")
+        case .batteryWatts: return L10n.s("Battery Power")
+        case .systemWatts: return L10n.s("System Power")
+        case .cpuTemperature: return L10n.s("CPU Temp")
+        case .gpuTemperature: return L10n.s("GPU Temp")
+        case .fanRPM: return L10n.s("Fan")
+        case .batteryPlugged: return L10n.s("On Power")
         }
     }
 

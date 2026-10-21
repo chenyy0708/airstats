@@ -37,7 +37,7 @@ struct AboutPane: View {
                 }
                 .padding(.vertical, Design.Space.xs)
                 .accessibilityElement(children: .combine)
-                .accessibilityLabel("AirStats, \(versionText)")
+                .accessibilityLabel(Text(L10n.format("AirStats, %@", versionText)))
             }
 
             Section {
@@ -112,19 +112,20 @@ struct AboutPane: View {
     /// compares releases by and means nothing to the person reading it.
     private var versionText: String {
         guard let short = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
-            // Running the bare SwiftPM binary rather than the assembled .app.
-            return "Development build"
+            // 未打包的 SwiftPM 二进制没有版本号。
+            return L10n.s("Development build")
         }
-        return "Version \(short)"
+        return L10n.format("Version %@", short)
     }
 
     private func coreText(_ system: SystemInfoSnapshot) -> String {
         var text = "\(system.logicalCores)"
         if system.performanceCores > 0 || system.efficiencyCores > 0 {
-            text += " (\(system.performanceCores) performance, \(system.efficiencyCores) efficiency)"
+            text += L10n.format(" (%lld performance, %lld efficiency)",
+                                Int64(system.performanceCores), Int64(system.efficiencyCores))
         }
         if let gpu = system.gpuCoreCount {
-            text += " · \(gpu) GPU"
+            text += L10n.format(" · %lld GPU", Int64(gpu))
         }
         return text
     }
@@ -140,10 +141,10 @@ struct AboutPane: View {
         do {
             try settings.exportJSON().write(to: url, options: .atomic)
             transferFailed = false
-            transferResult = "Exported to \(url.lastPathComponent)."
+            transferResult = L10n.format("Exported to %@.", url.lastPathComponent)
         } catch {
             transferFailed = true
-            transferResult = "Could not export: \(error.localizedDescription)"
+            transferResult = L10n.format("Could not export: %@", error.localizedDescription)
         }
     }
 
@@ -155,10 +156,10 @@ struct AboutPane: View {
         do {
             try settings.importJSON(Data(contentsOf: url))
             transferFailed = false
-            transferResult = "Imported from \(url.lastPathComponent)."
+            transferResult = L10n.format("Imported from %@.", url.lastPathComponent)
         } catch {
             transferFailed = true
-            transferResult = "\(url.lastPathComponent) is not a settings file AirStats can read. Your settings are unchanged."
+            transferResult = L10n.format("%@ is not a settings file AirStats can read. Your settings are unchanged.", url.lastPathComponent)
         }
     }
 }

@@ -126,7 +126,7 @@ struct PanelModuleView: View {
         }
         .accessibilityLabel(module.label)
         .accessibilityValue(summary.value ?? "")
-        .accessibilityHint(isExpanded ? "Collapse" : "Expand")
+        .accessibilityHint(isExpanded ? L10n.s("Collapse") : L10n.s("Expand"))
     }
 
     @ViewBuilder

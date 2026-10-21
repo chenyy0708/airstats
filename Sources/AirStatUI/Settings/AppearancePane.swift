@@ -32,7 +32,7 @@ struct AppearancePane: View {
                 // how the whole app looks. Filed among the nine per-metric rows it
                 // read as a tenth metric called "All Metrics", and its reach over the
                 // rows beneath it was something you had to discover by using it.
-                ColorRow(label: "All Metrics",
+                ColorRow(label: L10n.s("All Metrics"),
                          symbol: "circle.hexagongrid.fill",
                          current: theme.uniformColor.map(Color.init(themeColor:))
                              ?? Design.Palette.primaryText,
@@ -44,13 +44,12 @@ struct AppearancePane: View {
                          // different colours and not only nine matching ones.
                          isOverridden: !theme.metrics.isEmpty,
                          status: allMetricsStatus,
-                         defaultTitle: "Use Defaults",
+                         defaultTitle: L10n.s("Use Defaults"),
                          set: { color in
                              settings.update { $0.theme.setAllColors(color) }
                          })
             } footer: {
-                SettingsFootnote("All Metrics sets every colour below at once. "
-                                 + "Each metric can still be changed on its own.")
+                SettingsFootnote("All Metrics sets every colour below at once. Each metric can still be changed on its own.")
             }
 
             // A board rather than nine rows. One colour per metric is a palette, and a
@@ -108,9 +107,9 @@ struct AppearancePane: View {
             Spacer(minLength: Design.Space.s)
             SwatchButton(current: Design.Palette.metric(id),
                          isOverridden: theme.color(for: id) != nil,
-                         defaultTitle: "Use Default",
-                         label: "\(id.label) colour",
-                         value: theme.color(for: id) != nil ? "Custom" : "Default",
+                         defaultTitle: L10n.s("Use Default"),
+                         label: L10n.format("%@ colour", id.label),
+                         value: theme.color(for: id) != nil ? L10n.s("Custom") : L10n.s("Default"),
                          set: { color in
                              settings.update { $0.theme.setColor(color, for: id) }
                          })
@@ -164,15 +163,15 @@ private struct ColorRow: View {
                          showsSpectrum: showsSpectrum,
                          isOverridden: isOverridden,
                          defaultTitle: defaultTitle,
-                         label: "\(label) colour",
-                         value: statusText ?? "Default",
+                         label: L10n.format("%@ colour", L10n.s(label)),
+                         value: statusText ?? L10n.s("Default"),
                          set: set)
         } label: {
             HStack(spacing: Design.Space.s) {
                 Image(systemName: symbol)
                     .frame(width: 18, alignment: .center)
                     .foregroundStyle(showsSpectrum ? Design.Palette.secondaryText : current)
-                Text(label)
+                Text(L10n.s(label))
                 if let statusText {
                     Text(statusText)
                         .font(.callout)
@@ -184,7 +183,7 @@ private struct ColorRow: View {
         }
     }
 
-    private var statusText: String? { status ?? (isOverridden ? "Custom" : nil) }
+    private var statusText: String? { status ?? (isOverridden ? L10n.s("Custom") : nil) }
 }
 
 /// The colour control itself: a swatch of what is drawn now, and a palette on click.
@@ -334,7 +333,7 @@ private struct ColorPalette: View {
                     set(nil)
                     isPresented = false
                 } label: {
-                    Label(defaultTitle, systemImage: "arrow.uturn.backward")
+                    Label(L10n.s(defaultTitle), systemImage: "arrow.uturn.backward")
                 }
                 .buttonStyle(.link)
             }

@@ -87,6 +87,13 @@ if patched != strings:
         plistlib.dump(patched, handle, fmt=plistlib.FMT_BINARY)
 PY
 
+# 界面文案。en.lproj 让英文保持为一种可用语言；包里只有 zh-Hans 时，
+# 系统会给所有用户显示中文。必须在签名前放进 Resources。
+for lproj in Resources/*.lproj; do
+  [ -d "$lproj" ] || continue
+  cp -R "$lproj" "$APP/Contents/Resources/"
+done
+
 # Ad-hoc signature. Without any signature macOS refuses some window-server
 # privileges a status item needs.
 codesign --force --sign - --timestamp=none "$APP" >/dev/null 2>&1 || {

@@ -86,16 +86,16 @@ extension PanelModuleView {
         let performance = cores(cpu, of: .performance)
         if efficiency.isEmpty || performance.isEmpty {
             if !cpu.perCore.isEmpty {
-                PanelCoreRow(label: "\(cpu.perCore.count) cores", loads: cpu.perCore,
+                PanelCoreRow(label: L10n.format("%lld cores", Int64(cpu.perCore.count)), loads: cpu.perCore,
                              busy: cpu.total.busy, tint: tint,
                              slotWidth: PanelCoreRow.slotWidth(sharedAcross: cpu.perCore.count))
             }
         } else {
             let slot = PanelCoreRow.slotWidth(sharedAcross: max(efficiency.count, performance.count))
             VStack(alignment: .leading, spacing: Design.Space.xs) {
-                PanelCoreRow(label: "\(efficiency.count) E-cores", loads: efficiency,
+                PanelCoreRow(label: L10n.format("%lld E-cores", Int64(efficiency.count)), loads: efficiency,
                              busy: cpu.efficiencyBusy, tint: tint, slotWidth: slot)
-                PanelCoreRow(label: "\(performance.count) P-cores", loads: performance,
+                PanelCoreRow(label: L10n.format("%lld P-cores", Int64(performance.count)), loads: performance,
                              busy: cpu.performanceBusy, tint: tint, slotWidth: slot)
             }
         }
@@ -121,10 +121,10 @@ extension PanelModuleView {
             let segments = Self.readableSegments(CompositionSegment.memory(memory))
             VStack(alignment: .leading, spacing: Design.Space.xs) {
                 StackedCompositionBar(segments, format: .memoryBytes,
-                                      title: "Memory composition",
+                                      title: L10n.s("Memory composition"),
                                       barHeight: Design.Space.s, showsLegend: false)
                 PanelSegmentLegend(segments: segments, format: .memoryBytes)
-                PanelBarRow(label: "Pressure",
+                PanelBarRow(label: L10n.s("Pressure"),
                             value: "\(memory.memoryPressure.label) · \(formatter.percent(memory.pressureFraction))",
                             fraction: memory.pressureFraction,
                             tint: PanelModuleView.barTint)
@@ -236,7 +236,7 @@ extension PanelModuleView {
                     // The network's name labels its own signal bar; a row that said
                     // "Signal" and a row that said "Network" would be two lines
                     // saying one thing.
-                    PanelBarRow(label: wifi.ssid ?? "Signal", value: signalValue(wifi),
+                    PanelBarRow(label: wifi.ssid ?? L10n.s("Signal"), value: signalValue(wifi),
                                 fraction: quality, tint: tint)
                 }
                 history()
@@ -267,7 +267,7 @@ extension PanelModuleView {
         switch state {
         case .value(let address): return address
         case .failure(.unsupported): return nil
-        case .failure(.pending): return "Looking up…"
+        case .failure(.pending): return L10n.s("Looking up…")
         case .failure: return MetricFormatter.unavailable
         }
     }
@@ -326,7 +326,9 @@ extension PanelModuleView {
                         .foregroundStyle(Design.Palette.tertiaryText)
                 }
                 Spacer(minLength: Design.Space.m)
-                Text("\(formatter.storage(occupied)) of \(formatter.storage(volume.totalBytes))")
+                Text(L10n.format("%@ of %@",
+                                formatter.storage(occupied),
+                                formatter.storage(volume.totalBytes)))
                     .font(Design.Text.caption.monospacedDigit())
                     .foregroundStyle(Design.Palette.secondaryText)
                     .lineLimit(1)
@@ -386,13 +388,14 @@ extension PanelModuleView {
 
         guard !accessory.parts.isEmpty else {
             let charge = formatter.percentValue(accessory.percent)
-            return accessory.isCharging ? "\(charge) · charging" : charge
+            return accessory.isCharging ? L10n.format("%@ · charging", charge) : charge
         }
         return accessory.parts.map { part in
             let label: String
             switch part.name.lowercased() {
             case "left": label = "L"
             case "right": label = "R"
+            case "case": label = L10n.s("Case")
             default: label = part.name
             }
             let charge = formatter.percentValue(part.percent)
@@ -418,7 +421,7 @@ extension PanelModuleView {
         } else if let toEmpty = power.timeToEmpty {
             entries.append(PanelDetailEntry("Time left", formatter.duration(toEmpty)))
         } else if power.isFullyCharged {
-            entries.append(PanelDetailEntry("State", "Charged"))
+            entries.append(PanelDetailEntry("State", L10n.s("Charged")))
         }
         if let health = power.healthPercent {
             entries.append(PanelDetailEntry("Health", formatter.percentValue(health)))
@@ -430,7 +433,7 @@ extension PanelModuleView {
             entries.append(PanelDetailEntry("Condition", condition))
         }
         if power.isLowPowerMode {
-            entries.append(PanelDetailEntry("Low Power", "On"))
+            entries.append(PanelDetailEntry("Low Power", L10n.s("On")))
         }
         return entries
     }

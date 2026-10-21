@@ -59,8 +59,7 @@ struct NotificationsPane: View {
                 SettingsFootnote("Waiting for your answer to the macOS permission prompt.")
             case .unavailable:
                 VStack(alignment: .leading, spacing: Design.Space.s) {
-                    SettingsCaution("macOS is not allowing AirStats to send notifications, "
-                                    + "so these rules cannot alert you.")
+                    SettingsCaution("macOS is not allowing AirStats to send notifications, so these rules cannot alert you.")
                     Button("Open Notification Settings…") { openSystemNotificationSettings() }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -145,7 +144,7 @@ struct NotificationsPane: View {
             }
             .labelsHidden()
             .fixedSize()
-            .accessibilityLabel("\(rule.metric.label) level")
+            .accessibilityLabel(Text(L10n.format("%@ level", rule.metric.label)))
         } else {
             HStack(spacing: Design.Space.xs) {
                 TextField("", value: thresholdBinding(rule), format: .number.precision(.fractionLength(0)))
@@ -153,7 +152,7 @@ struct NotificationsPane: View {
                     .textFieldStyle(.roundedBorder)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 56)
-                    .accessibilityLabel("\(rule.metric.label) threshold in \(unitName(rule.metric))")
+                    .accessibilityLabel(Text(L10n.format("%@ threshold in %@", rule.metric.label, unitName(rule.metric))))
                 Stepper("", value: thresholdBinding(rule), in: range(for: rule.metric), step: 1)
                     .labelsHidden()
                     .accessibilityHidden(true)
@@ -168,21 +167,28 @@ struct NotificationsPane: View {
             ? (ThermalPressure(rawValue: Int(rule.threshold))?.label ?? "\(Int(rule.threshold))")
             : "\(Int(rule.threshold))\(rule.metric.unitSuffix)"
         let sustained = rule.sustainedFor <= 0
-            ? "as soon as it happens"
-            : "after \(SettingsLabels.duration(rule.sustainedFor)) of it holding"
-        return "Notifies \(sustained), then not again for \(SettingsLabels.duration(rule.cooldown)). Threshold: \(value). Needs the \(rule.metric.requiredSource.label) collector, which this rule keeps running."
+            ? L10n.s("as soon as it happens")
+            : L10n.format("after %@ of it holding", SettingsLabels.duration(rule.sustainedFor))
+        return L10n.format(
+            "Notifies %@, then not again for %@. Threshold: %@. Needs the %@ collector, which this rule keeps running.",
+            sustained,
+            SettingsLabels.duration(rule.cooldown),
+            value,
+            rule.metric.requiredSource.label)
     }
 
     private func accessibilityValue(_ rule: ThresholdRule) -> String {
-        rule.isEnabled ? "On, threshold \(Int(rule.threshold)) \(unitName(rule.metric))" : "Off"
+        rule.isEnabled
+            ? L10n.format("On, threshold %lld %@", Int64(rule.threshold), unitName(rule.metric))
+            : L10n.s("Off")
     }
 
     private func unitName(_ metric: ThresholdMetric) -> String {
         switch metric {
-        case .cpuUsage, .memoryPressure, .batteryLow, .batteryFull: return "percent"
-        case .diskFree: return "gigabytes"
-        case .cpuTemperature: return "degrees"
-        case .thermalPressure: return "level"
+        case .cpuUsage, .memoryPressure, .batteryLow, .batteryFull: return L10n.s("percent")
+        case .diskFree: return L10n.s("gigabytes")
+        case .cpuTemperature: return L10n.s("degrees")
+        case .thermalPressure: return L10n.s("level")
         }
     }
 

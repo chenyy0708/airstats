@@ -49,8 +49,8 @@ struct ShortcutsFormSections: View {
         }
         return byCombination.compactMap { combination, actions in
             guard actions.count > 1 else { return nil }
-            let names = actions.map(\.label).joined(separator: " and ")
-            return "\(combination.display) is assigned to \(names)."
+            let names = actions.map(\.label).joined(separator: L10n.s(" and "))
+            return L10n.format("%@ is assigned to %@.", combination.display, names)
         }
         .sorted()
     }

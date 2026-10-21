@@ -17,10 +17,8 @@ public enum MetricFailure: Sendable, Equatable, Hashable {
 
     public var message: String {
         switch self {
-        case .unsupported(let s): return s
-        case .failed(let s): return s
-        case .denied(let s): return s
-        case .pending: return "Collecting…"
+        case .unsupported(let s), .failed(let s), .denied(let s): return L10n.s(s)
+        case .pending: return L10n.s("Collecting…")
         }
     }
 
@@ -31,10 +29,10 @@ public enum MetricFailure: Sendable, Equatable, Hashable {
     /// still what the tooltip and VoiceOver read out.
     public var shortLabel: String {
         switch self {
-        case .unsupported: return "Unavailable"
-        case .failed: return "No reading"
-        case .denied: return "No access"
-        case .pending: return "Collecting…"
+        case .unsupported: return L10n.s("Unavailable")
+        case .failed: return L10n.s("No reading")
+        case .denied: return L10n.s("No access")
+        case .pending: return L10n.s("Collecting…")
         }
     }
 
