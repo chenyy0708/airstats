@@ -343,11 +343,16 @@ struct RestoreDefaultsButton: View {
 /// nothing there.
 struct GlassBackdrop: View {
     var body: some View {
+        // macOS 26 上系统弹出框本身已是 Liquid Glass。该分支要 macOS 26 SDK 才编得过。
+        #if compiler(>=6.2)
         if #available(macOS 26.0, *) {
             Color.clear
         } else {
             LegacyGlassBackdrop()
         }
+        #else
+        LegacyGlassBackdrop()
+        #endif
     }
 }
 

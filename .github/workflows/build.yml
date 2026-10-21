@@ -9,10 +9,17 @@ on:
 jobs:
   build-app:
     name: Build AirStats.app
-    # 面板和设置绘制 Liquid Glass，必须用 macOS 26 SDK。macos-14 编不过。
-    runs-on: macos-26
+    # macos-26 镜像经常排不到托管运行器。macos-15 带 Xcode 16（Swift 6），
+    # 能编过这套工程：Liquid Glass 只在 Swift 6.2 / macOS 26 SDK 下编译，否则用原有材质。
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+
+      - name: Show Xcode
+        run: |
+          xcodebuild -version
+          swift --version
+          xcrun --sdk macosx --show-sdk-version
 
       - name: Assemble release app
         run: Scripts/build.sh release

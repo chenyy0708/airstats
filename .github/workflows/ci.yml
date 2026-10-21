@@ -7,8 +7,9 @@ on:
 
 jobs:
   build-and-test:
-    # The panel and settings draw Liquid Glass, which needs the macOS 26 SDK.
-    runs-on: macos-26
+    # macos-26 hosted runners are capacity-constrained and often never start.
+    # macos-15 has Xcode 16. Liquid Glass compiles only with the macOS 26 SDK.
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 
