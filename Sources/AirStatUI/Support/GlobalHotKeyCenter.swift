@@ -147,8 +147,9 @@ public final class GlobalHotKeyCenter {
     /// worse outcome than losing a binding the user has to record again anyway.
     private func reportUnavailable(_ shortcut: AirStatKit.KeyboardShortcut, for action: ShortcutAction) {
         let display = ShortcutDisplay.string(for: shortcut)
-        pendingReport = "\(display) is already claimed by macOS or another app, "
-            + "so it was not assigned to \(action.label). Record a different combination."
+        pendingReport = L10n.format(
+            "%@ is already claimed by macOS or another app, so it was not assigned to %@. Record a different combination.",
+            display, action.label)
         settings.update { $0.shortcuts.bindings[action] = nil }
     }
 
@@ -164,9 +165,9 @@ public final class GlobalHotKeyCenter {
         pendingReport = nil
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = "Shortcut Unavailable"
+        alert.messageText = L10n.s("Shortcut Unavailable")
         alert.informativeText = message
-        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: L10n.s("OK"))
         alert.runModal()
     }
 

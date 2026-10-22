@@ -179,10 +179,12 @@ struct PanelUpdateRow: View {
     /// A staged update wants a relaunch and nothing else, so the row says so instead
     /// of promising an install it has already done.
     private var headline: String {
-        update.isReadyToInstall ? "AirStats \(update.version) is ready" : "AirStats \(update.version) is available"
+        update.isReadyToInstall
+            ? L10n.format("AirStats %@ is ready", update.version)
+            : L10n.format("AirStats %@ is available", update.version)
     }
 
-    private var action: String { update.isReadyToInstall ? "Restart" : "Install" }
+    private var action: String { update.isReadyToInstall ? L10n.s("Restart") : L10n.s("Install") }
 
     @State private var isHovering = false
 
@@ -212,8 +214,8 @@ struct PanelUpdateRow: View {
             }
         }
         .accessibilityLabel(headline)
-        .accessibilityHint(update.isReadyToInstall ? "Relaunches AirStats into the new version"
-                                                   : "Opens the updater to install it")
+        .accessibilityHint(update.isReadyToInstall ? L10n.s("Relaunches AirStats into the new version")
+                                                   : L10n.s("Opens the updater to install it"))
     }
 }
 
@@ -248,7 +250,7 @@ struct PanelFooterButton: View {
                 Image(systemName: symbol)
                     .font(Design.Text.caption)
                     .foregroundStyle(Design.Palette.secondaryText)
-                Text(title)
+                Text(L10n.s(title))
                     .font(Design.Text.label)
                     .foregroundStyle(Design.Palette.primaryText)
             }
@@ -266,6 +268,6 @@ struct PanelFooterButton: View {
                 isHovering = hovering
             }
         }
-        .accessibilityLabel(title)
+        .accessibilityLabel(L10n.s(title))
     }
 }

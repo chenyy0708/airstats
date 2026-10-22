@@ -193,12 +193,17 @@ public struct StackedCompositionBar: View {
     }
 
     private var accessibilityValue: String {
-        guard total > 0 else { return "No data" }
+        guard total > 0 else { return L10n.s("No data") }
         let parts = segments.map { segment in
             let share = formatter.percent(segment.value / total)
-            return "\(segment.label) \(format.string(segment.value, using: formatter)), \(share)"
+            return L10n.format("%@ %@, %@",
+                               segment.label,
+                               format.string(segment.value, using: formatter),
+                               share)
         }
-        return "Total \(format.string(total, using: formatter)). " + parts.joined(separator: ". ")
+        return L10n.format("Total %@.", format.string(total, using: formatter))
+            + " "
+            + parts.joined(separator: L10n.s(". "))
     }
 }
 
@@ -209,15 +214,15 @@ extension CompositionSegment {
         let tint = Design.Palette.metric(.memory)
         let shades = ChartPalette.composition(tint, count: 4)
         return [
-            CompositionSegment(id: "app", label: "App", value: Double(memory.appBytes),
+            CompositionSegment(id: "app", label: L10n.s("App"), value: Double(memory.appBytes),
                                tint: shades[0]),
-            CompositionSegment(id: "wired", label: "Wired", value: Double(memory.wiredBytes),
+            CompositionSegment(id: "wired", label: L10n.s("Wired"), value: Double(memory.wiredBytes),
                                tint: shades[1]),
-            CompositionSegment(id: "compressed", label: "Compressed", shortLabel: "Comp",
+            CompositionSegment(id: "compressed", label: L10n.s("Compressed"), shortLabel: L10n.s("Comp"),
                                value: Double(memory.compressedBytes), tint: shades[2]),
-            CompositionSegment(id: "cached", label: "Cached", value: Double(memory.cachedBytes),
+            CompositionSegment(id: "cached", label: L10n.s("Cached"), value: Double(memory.cachedBytes),
                                tint: shades[3]),
-            CompositionSegment(id: "free", label: "Free", value: Double(memory.freeBytes),
+            CompositionSegment(id: "free", label: L10n.s("Free"), value: Double(memory.freeBytes),
                                tint: Design.Palette.track, isRemainder: true),
         ]
     }

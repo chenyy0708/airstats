@@ -142,25 +142,26 @@ public struct CoreGrid: View {
 
     private static func clusterLabel(_ kind: CoreKind, count: Int) -> String {
         switch kind {
-        case .efficiency: return "\(count) efficiency"
-        case .performance: return "\(count) performance"
-        case .unknown: return "\(count) cores"
+        case .efficiency: return L10n.format("%lld efficiency", Int64(count))
+        case .performance: return L10n.format("%lld performance", Int64(count))
+        case .unknown: return L10n.format("%lld cores", Int64(count))
         }
     }
 
     /// A screen reader gets the shape as numbers: per-cluster averages plus the
     /// busiest single core, which is what the picture is actually saying.
     private var accessibilityValue: String {
-        guard !cores.isEmpty else { return "No per-core data" }
+        guard !cores.isEmpty else { return L10n.s("No per-core data") }
         var parts: [String] = []
         for group in clusters {
             let slice = cores[group.range]
             let average = slice.reduce(0.0) { $0 + $1.busy } / Double(slice.count)
-            parts.append("\(Self.clusterLabel(group.kind, count: slice.count))"
-                         + " averaging \(formatter.percent(average))")
+            parts.append(L10n.format("%@ averaging %@",
+                                      Self.clusterLabel(group.kind, count: slice.count),
+                                      formatter.percent(average)))
         }
         let busiest = cores.reduce(0.0) { max($0, $1.busy) }
-        parts.append("busiest core \(formatter.percent(busiest))")
-        return parts.joined(separator: ", ") + "."
+        parts.append(L10n.format("busiest core %@", formatter.percent(busiest)))
+        return parts.joined(separator: L10n.s(", ")) + L10n.s(".")
     }
 }

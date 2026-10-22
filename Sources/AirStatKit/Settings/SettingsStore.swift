@@ -105,13 +105,13 @@ public final class SettingsStore {
         /// than one of these.
         public var label: String {
             switch self {
-            case .general: return "General"
-            case .menuBar: return "Menu Bar"
-            case .charts: return "Charts"
-            case .desktopWidget: return "Desktop Widget"
-            case .notifications: return "Notifications"
-            case .shortcuts: return "Shortcuts"
-            case .theme: return "Colors"
+            case .general: return L10n.s("General")
+            case .menuBar: return L10n.s("Menu Bar")
+            case .charts: return L10n.s("Charts")
+            case .desktopWidget: return L10n.s("Desktop Widget")
+            case .notifications: return L10n.s("Notifications")
+            case .shortcuts: return L10n.s("Shortcuts")
+            case .theme: return L10n.s("Colors")
             }
         }
     }
@@ -190,13 +190,13 @@ public final class SettingsStore {
         } catch {
             if let backupData = try? Data(contentsOf: backup),
                let decoded = try? JSONDecoder().decode(Settings.self, from: backupData) {
-                return (sanitize(decoded), "Settings file was unreadable; restored the previous version.")
+                return (sanitize(decoded), L10n.s("Settings file was unreadable; restored the previous version."))
             }
             // Preserve the unreadable file for the user rather than deleting it.
             let quarantine = url.deletingLastPathComponent()
                 .appendingPathComponent("settings.corrupt-\(Int(Date().timeIntervalSince1970)).json")
             try? FileManager.default.moveItem(at: url, to: quarantine)
-            return (Settings(), "Settings file was unreadable and has been reset. The old file was kept at \(quarantine.lastPathComponent).")
+            return (Settings(), L10n.format("Settings file was unreadable and has been reset. The old file was kept at %@.", quarantine.lastPathComponent))
         }
     }
 

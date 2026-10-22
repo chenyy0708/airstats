@@ -97,7 +97,7 @@ public struct HistoryChart: View {
                 .padding(.top, Design.Space.xxs)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(module.key.label) history")
+        .accessibilityLabel(Text(L10n.format("%@ history", module.key.label)))
         .accessibilityValue(summary(window))
     }
 
@@ -256,7 +256,7 @@ public struct HistoryChart: View {
         .overlay(alignment: .bottomLeading) { floorLabel(window) }
         .overlay {
             if window.isEmpty {
-                SwiftUI.Text(window.range == .day ? "Collecting the day…" : "Collecting samples…")
+                SwiftUI.Text(window.range == .day ? L10n.s("Collecting the day…") : L10n.s("Collecting samples…"))
                     .font(Design.Text.micro)
                     .foregroundStyle(Design.Palette.tertiaryText)
                     .accessibilityHidden(true)
@@ -479,7 +479,7 @@ public struct HistoryChart: View {
     private func scrubReadout(_ scrub: Scrub, in window: Window) -> String {
         var parts = [window.timeLabel(at: scrub.fraction)]
         guard let column = scrub.column else {
-            parts.append("no samples")
+            parts.append(L10n.s("no samples"))
             return parts.joined(separator: "  ")
         }
         if window.secondary != nil {
@@ -491,31 +491,35 @@ public struct HistoryChart: View {
             parts.append(window.string(column.mean, using: formatter))
         }
         if window.shade != nil, let shade = scrub.shade {
-            parts.append(shade.mean >= Self.shadeThreshold ? "on power" : "on battery")
+            parts.append(shade.mean >= Self.shadeThreshold ? L10n.s("on power") : L10n.s("on battery"))
         }
         if let note = column.note { parts.append(note) }
         return parts.joined(separator: "  ")
     }
 
     private func summary(_ window: Window) -> String {
-        let over = window.range == .day ? "the last 24 hours" : ChartCaption.window(window.span)
-        guard !window.isEmpty else { return "No history yet over \(over)." }
+        let over = window.range == .day ? L10n.s("the last 24 hours") : ChartCaption.window(window.span)
+        guard !window.isEmpty else { return L10n.format("No history yet over %@.", over) }
         func sentence(_ label: String, _ track: Track) -> String {
             var text = label
-            if let last = track.last { text += ": now \(window.string(last, using: formatter))" }
-            if track.supportsTrend {
-                text += ", average \(window.string(track.average, using: formatter))"
-                text += ", range \(window.string(track.minimum, using: formatter))"
-                text += " to \(window.string(track.maximum, using: formatter))"
+            if let last = track.last {
+                text += L10n.format(": now %@", window.string(last, using: formatter))
             }
-            if let note = track.peakNote { text += ", highest while \(note) led" }
+            if track.supportsTrend {
+                text += L10n.format(", average %@", window.string(track.average, using: formatter))
+                text += L10n.format(", range %@", window.string(track.minimum, using: formatter))
+                text += L10n.format(" to %@", window.string(track.maximum, using: formatter))
+            }
+            if let note = track.peakNote {
+                text += L10n.format(", highest while %@ led", note)
+            }
             return text
         }
-        var text = sentence("\(module.key.label) over \(over)", window.primary)
+        var text = sentence(L10n.format("%@ over %@", module.key.label, over), window.primary)
         if let secondary = module.secondary, let track = window.secondary {
-            text += ". " + sentence(secondary.label, track)
+            text += L10n.format(". %@", sentence(secondary.label, track))
         }
-        return text + "."
+        return text + L10n.s(".")
     }
 }
 
@@ -527,7 +531,7 @@ struct HistoryRangePicker: View {
     var body: some View {
         HStack(spacing: Design.Space.xxs) {
             segment(.recent, label: recentLabel)
-            segment(.day, label: "24h")
+            segment(.day, label: L10n.s("24h"))
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Range")
@@ -697,7 +701,7 @@ public struct HistorySilhouette: View {
         }
         .frame(height: height)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(minutes.key.label), last 24 hours")
+        .accessibilityLabel(Text(L10n.format("%@, last 24 hours", minutes.key.label)))
         .accessibilityValue(summary)
     }
 
@@ -709,11 +713,12 @@ public struct HistorySilhouette: View {
     }
 
     private var summary: String {
-        guard !minutes.isEmpty else { return "No history yet." }
+        guard !minutes.isEmpty else { return L10n.s("No history yet.") }
         let format = ChartValueFormat.standard(for: minutes.key)
-        return "average \(format.string(minutes.average, using: formatter)), range "
-            + "\(format.string(minutes.minimum, using: formatter)) to "
-            + "\(format.string(minutes.maximum, using: formatter))."
+        return L10n.format("average %@, range %@ to %@.",
+                           format.string(minutes.average, using: formatter),
+                           format.string(minutes.minimum, using: formatter),
+                           format.string(minutes.maximum, using: formatter))
     }
 }
 

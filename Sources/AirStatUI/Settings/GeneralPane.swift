@@ -71,12 +71,12 @@ struct GeneralPane: View {
                 // notes and the Install button.
                 HStack(spacing: Design.Space.l) {
                     if let pending = updater?.pending {
-                        Button(pending.isReadyToInstall ? "Restart" : "Install…") {
+                        Button(pending.isReadyToInstall ? L10n.s("Restart") : L10n.s("Install…")) {
                             updater?.installPending()
                         }
                         .accessibilityHint(pending.isReadyToInstall
-                                           ? "Relaunches AirStats into the new version"
-                                           : "Opens the updater to install it")
+                                           ? L10n.s("Relaunches AirStats into the new version")
+                                           : L10n.s("Opens the updater to install it"))
                     } else {
                         Button("Check Now") { updater?.checkQuietly() }
                             .disabled(updater?.canCheck != true)
@@ -104,8 +104,7 @@ struct GeneralPane: View {
             } header: {
                 Text("Privacy")
             } footer: {
-                SettingsFootnote("Left off, the Network module shows your local "
-                                 + "addresses only and AirStats contacts nothing.")
+                SettingsFootnote("Left off, the Network module shows your local addresses only and AirStats contacts nothing.")
             }
         }
         .settingsFormStyle()
@@ -144,13 +143,14 @@ struct GeneralPane: View {
         } else if updater?.pending != nil || updater?.lastCheck != nil {
             VStack(alignment: .trailing, spacing: Design.Space.xxs) {
                 if let pending = updater?.pending {
-                    Text(pending.isReadyToInstall ? "AirStats \(pending.version) is ready"
-                                                  : "AirStats \(pending.version) is available")
+                    Text(pending.isReadyToInstall
+                         ? L10n.format("AirStats %@ is ready", pending.version)
+                         : L10n.format("AirStats %@ is available", pending.version))
                 } else {
                     Text("Up to date")
                 }
                 if let checked = updater?.lastCheck {
-                    Text("Checked \(Self.checkedPhrase(checked))")
+                    Text(L10n.format("Checked %@", Self.checkedPhrase(checked)))
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                 }
@@ -165,7 +165,7 @@ struct GeneralPane: View {
     /// drawn against, and the formatter reads that as "in 0 seconds".
     private static func checkedPhrase(_ checked: Date) -> String {
         let now = Date()
-        guard now.timeIntervalSince(checked) >= 60 else { return "just now" }
+        guard now.timeIntervalSince(checked) >= 60 else { return L10n.s("just now") }
         return relative.localizedString(for: checked, relativeTo: now)
     }
 
@@ -186,7 +186,9 @@ struct GeneralPane: View {
 
     private func applyLoginItem(_ enabled: Bool) {
         if let error = LoginItem.synchronize(enabled: enabled) {
-            loginItemError = "macOS refused to \(enabled ? "register" : "remove") the login item: \(error.localizedDescription)"
+            loginItemError = L10n.format("macOS refused to %@ the login item: %@",
+                                          enabled ? L10n.s("register") : L10n.s("remove"),
+                                          error.localizedDescription)
             // The stored preference must not claim something the system rejected.
             settings.update { $0.general.launchAtLogin = LoginItem.isEnabled }
         } else {

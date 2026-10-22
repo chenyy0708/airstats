@@ -11,11 +11,13 @@ public enum HistoryRange: Equatable, Sendable, CaseIterable {
     case day
 
     /// "5m", "1h", "24h": short enough for a two segment control in a chart footer.
+    /// 中文用同样短的单位（分、时、秒）。没有字符串表时格式串原样展开，测试仍得到 "5m"。
     public static func label(forSpan span: TimeInterval) -> String {
-        if span < 60 { return "\(Int(span.rounded()))s" }
-        if span < 3_600 { return "\(Int((span / 60).rounded()))m" }
+        if span < 60 { return L10n.format("%llds", Int64(span.rounded())) }
+        if span < 3_600 { return L10n.format("%lldm", Int64((span / 60).rounded())) }
         let hours = span / 3_600
-        return hours == hours.rounded() ? "\(Int(hours))h" : String(format: "%.1fh", hours)
+        if hours == hours.rounded() { return L10n.format("%lldh", Int64(hours)) }
+        return L10n.format("%.1fh", hours)
     }
 }
 
@@ -375,7 +377,7 @@ enum HistoryAxis {
     /// and thirds of the shipped spans are all whole seconds.
     static func labels(span: TimeInterval, end: Date) -> [String] {
         marks.map { mark in
-            if mark >= 1 { return "now" }
+            if mark >= 1 { return L10n.s("now") }
             if span >= 7_200 {
                 return clock(end.addingTimeInterval(-span * (1 - mark)))
             }
@@ -390,7 +392,7 @@ enum HistoryAxis {
     /// "-5m", "-3:20", "-40s": how long before now a point on the axis is.
     static func relative(_ offset: TimeInterval) -> String {
         let seconds = Int((-offset).rounded())
-        guard seconds > 0 else { return "now" }
+        guard seconds > 0 else { return L10n.s("now") }
         if seconds < 60 { return "-\(seconds)s" }
         let minutes = seconds / 60
         let rest = seconds % 60

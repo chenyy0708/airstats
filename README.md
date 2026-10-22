@@ -23,6 +23,29 @@ holds a few megabytes and a fraction of a percent of one core rather than the te
 megabytes its peers take. It has no Dock icon, and reads the system through Mach, IOKit,
 sysctl and CoreWLAN.
 
+## 简体中文
+
+这是 [byrencheema/airstats](https://github.com/byrencheema/airstats) 的简体中文界面分支，许可证仍是 MIT（见 [LICENSE](LICENSE)）。采样和性能逻辑与上游一致，没有加入遥测。
+
+Mac 的首选语言是简体中文时，菜单栏、设置、面板、提醒和关于页面显示中文；其他语言继续用英文。菜单栏竖排缩写（CPU、TEMP 等）仍是拉丁字母，那一列只有三个大写字母的高度，中文会叠在一起。横排短标题和其余界面会显示中文。
+
+### 从 GitHub Actions 下载构建
+
+工作流名称是 **Build macOS app**，运行器是 `macos-26`，并会选中 Xcode 26，从而编进 Liquid Glass。`#if compiler(>=6.2)` 仍在：更早的 SDK（例如本机的 Xcode 16）会改用原来的毛玻璃材质，简体中文两种构建都在。最低系统版本仍是 macOS 14。`macos-26` 托管运行器偶尔排不上队，作业会在还没编译时被取消；打开那次运行点 **Re-run jobs** 即可。
+
+1. 打开这个仓库的 [Actions](https://github.com/chenyy0708/airstats/actions) 页。
+2. 左侧选择 **Build macOS app**。
+3. 推送到 `main`，或打开拉取请求时，工作流会自动运行。工作流文件已经在默认分支上之后，也可以在该页选择 **Run workflow** 手动运行。
+4. 打开一次成功的运行，滚到页面底部的 **Artifacts**。
+5. 下载 **AirStats-macos-app**（里面是 `AirStats.app` 的 zip）或 **AirStats-macos-dmg**（里面是 `.dmg`）。GitHub 会把构件再套一层 zip，解压一次就能看到。
+6. 把 `AirStats.app` 拖进“应用程序”。这个包只做了临时签名，从浏览器下载后 macOS 会隔离它。在终端执行：
+
+```sh
+xattr -dr com.apple.quarantine /Applications/AirStats.app
+```
+
+然后打开。它没有 Apple 公证，和上游在 [airstats.app](https://airstats.app) 提供的已公证安装包不是同一种分发。
+
 ## Requirements
 
 - macOS 14 or later
@@ -45,7 +68,7 @@ those can be turned off in General settings.
 
 ## Build from source
 
-You need Xcode 26 or later: the app draws Liquid Glass, which needs the macOS 26 SDK.
+You need Xcode 16 or later (Swift 6). Liquid Glass is compiled only with the macOS 26 SDK (`#if compiler(>=6.2)`); earlier SDKs keep the material backdrop. The GitHub Actions app build runs on `macos-26` and selects Xcode 26.
 
 ```sh
 Scripts/build.sh release

@@ -241,9 +241,9 @@ private struct DesktopWidgetModuleView: View {
             var readout = DesktopWidgetReadout(module: module, value: formatter.percent(cpu.total.busy))
             readout.fraction = cpu.total.busy
             readout.details = [
-                DesktopWidgetDetail("user", "User", formatter.percent(cpu.total.user)),
-                DesktopWidgetDetail("system", "System", formatter.percent(cpu.total.system)),
-                DesktopWidgetDetail("load", "Load", formatter.fixed(cpu.loadAverage.one, decimals: 2)),
+                DesktopWidgetDetail("user", L10n.s("User"), formatter.percent(cpu.total.user)),
+                DesktopWidgetDetail("system", L10n.s("System"), formatter.percent(cpu.total.system)),
+                DesktopWidgetDetail("load", L10n.s("Load"), formatter.fixed(cpu.loadAverage.one, decimals: 2)),
             ]
             return readout
         }
@@ -254,10 +254,12 @@ private struct DesktopWidgetModuleView: View {
             var readout = DesktopWidgetReadout(module: module, value: formatter.percent(memory.usedFraction))
             readout.fraction = memory.usedFraction
             readout.details = [
-                DesktopWidgetDetail("used", "Used",
-                              "\(formatter.memory(memory.usedBytes)) of \(formatter.memory(memory.totalBytes))"),
-                DesktopWidgetDetail("pressure", "Pressure", formatter.percent(memory.pressureFraction)),
-                DesktopWidgetDetail("swap", "Swap", formatter.memory(memory.swapUsedBytes)),
+                DesktopWidgetDetail("used", L10n.s("Used"),
+                              L10n.format("%@ of %@",
+                                          formatter.memory(memory.usedBytes),
+                                          formatter.memory(memory.totalBytes))),
+                DesktopWidgetDetail("pressure", L10n.s("Pressure"), formatter.percent(memory.pressureFraction)),
+                DesktopWidgetDetail("swap", L10n.s("Swap"), formatter.memory(memory.swapUsedBytes)),
             ]
             return readout
         }
@@ -274,7 +276,9 @@ private struct DesktopWidgetModuleView: View {
             if let device, let used = device.vramUsedBytes, let total = device.vramTotalBytes, total > 0 {
                 readout.details = [
                     DesktopWidgetDetail("vram", device.memoryLabel,
-                                  "\(formatter.memory(used)) of \(formatter.memory(total))"),
+                                  L10n.format("%@ of %@",
+                                              formatter.memory(used),
+                                              formatter.memory(total))),
                 ]
             }
             return readout
@@ -290,11 +294,11 @@ private struct DesktopWidgetModuleView: View {
                 module: module,
                 value: "↓ " + formatter.networkRate(network.downloadBytesPerSecond))
             var details = [
-                DesktopWidgetDetail("up", "Upload", formatter.networkRate(network.uploadBytesPerSecond)),
-                DesktopWidgetDetail("type", "Link", network.connectionType.label),
+                DesktopWidgetDetail("up", L10n.s("Upload"), formatter.networkRate(network.uploadBytesPerSecond)),
+                DesktopWidgetDetail("type", L10n.s("Link"), network.connectionType.label),
             ]
             if let ssid = network.wifi?.ssid {
-                details.append(DesktopWidgetDetail("ssid", "Network", ssid))
+                details.append(DesktopWidgetDetail("ssid", L10n.s("Network"), ssid))
             }
             readout.details = details
             return readout
@@ -309,12 +313,12 @@ private struct DesktopWidgetModuleView: View {
                 value: root.map { formatter.percent($0.usedFraction) } ?? MetricFormatter.unavailable)
             readout.fraction = root?.usedFraction
             readout.details = [
-                DesktopWidgetDetail("read", "Read", formatter.diskRate(disk.readBytesPerSecond)),
-                DesktopWidgetDetail("write", "Write", formatter.diskRate(disk.writeBytesPerSecond)),
+                DesktopWidgetDetail("read", L10n.s("Read"), formatter.diskRate(disk.readBytesPerSecond)),
+                DesktopWidgetDetail("write", L10n.s("Write"), formatter.diskRate(disk.writeBytesPerSecond)),
             ]
             if let root {
                 readout.details.insert(
-                    DesktopWidgetDetail("free", "Free", formatter.storage(root.freeBytes)), at: 0)
+                    DesktopWidgetDetail("free", L10n.s("Free"), formatter.storage(root.freeBytes)), at: 0)
             }
             return readout
         }
@@ -327,7 +331,8 @@ private struct DesktopWidgetModuleView: View {
                 // substitute, and an em dash when even that is unavailable.
                 var readout = DesktopWidgetReadout(module: module, value: formatter.watts(power.systemWatts))
                 readout.details = [
-                    DesktopWidgetDetail("source", "Source", power.isPluggedIn ? "AC power" : "Unknown"),
+                    DesktopWidgetDetail("source", L10n.s("Source"),
+                                  power.isPluggedIn ? L10n.s("AC power") : L10n.s("Unknown")),
                 ]
                 return readout
             }
@@ -335,30 +340,30 @@ private struct DesktopWidgetModuleView: View {
                                          value: formatter.percentValue(percentage))
             readout.fraction = percentage / 100
             readout.details = [
-                DesktopWidgetDetail("state", "Status", batteryCaption(power)),
-                DesktopWidgetDetail("power", "Draw", formatter.watts(power.batteryWatts)),
+                DesktopWidgetDetail("state", L10n.s("Status"), batteryCaption(power)),
+                DesktopWidgetDetail("power", L10n.s("Draw"), formatter.watts(power.batteryWatts)),
             ]
             return readout
         }
     }
 
     private func batteryCaption(_ power: PowerSnapshot) -> String {
-        if power.isFullyCharged { return "Fully charged" }
+        if power.isFullyCharged { return L10n.s("Fully charged") }
         if power.isCharging {
-            guard let full = power.timeToFull else { return "Charging" }
-            return "\(formatter.duration(full)) to full"
+            guard let full = power.timeToFull else { return L10n.s("Charging") }
+            return L10n.format("%@ to full", formatter.duration(full))
         }
         guard let empty = power.timeToEmpty else {
-            return power.isPluggedIn ? "Plugged in" : "On battery"
+            return power.isPluggedIn ? L10n.s("Plugged in") : L10n.s("On battery")
         }
-        return "\(formatter.duration(empty)) left"
+        return L10n.format("%@ left", formatter.duration(empty))
     }
 
     private var thermalReadout: MetricState<DesktopWidgetReadout> {
         engine.thermal.map { thermal in
             var readout = DesktopWidgetReadout(module: module,
                                          value: formatter.temperature(thermal.cpuCelsius))
-            readout.details = [DesktopWidgetDetail("pressure", "Pressure", thermal.pressure.label)]
+            readout.details = [DesktopWidgetDetail("pressure", L10n.s("Pressure"), thermal.pressure.label)]
             if let fan = thermal.fans.first {
                 readout.details.append(DesktopWidgetDetail("fan", fan.name, formatter.rpm(fan.currentRPM)))
             }
@@ -385,9 +390,9 @@ private struct DesktopWidgetModuleView: View {
         engine.system.map { system in
             var readout = DesktopWidgetReadout(module: module, value: formatter.uptime(system.uptime))
             readout.details = [
-                DesktopWidgetDetail("chip", "Chip", system.chipName),
+                DesktopWidgetDetail("chip", L10n.s("Chip"), system.chipName),
                 DesktopWidgetDetail("os", system.osName, system.osVersion),
-                DesktopWidgetDetail("host", "Host", system.computerName),
+                DesktopWidgetDetail("host", L10n.s("Host"), system.computerName),
             ]
             return readout
         }
@@ -437,7 +442,7 @@ private struct DesktopWidgetHeaderRow: View {
         .modifier(FailureHelp(failure: failure))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(readout.title)
-        .accessibilityValue(failure.map { "Unavailable. \($0.message)" } ?? readout.value ?? "")
+        .accessibilityValue(failure.map { L10n.format("Unavailable. %@", $0.message) } ?? readout.value ?? "")
     }
 }
 

@@ -121,7 +121,7 @@ public final class StatusItemController {
         case .combined:
             if let entry = makeItem(readout: nil,
                                     autosaveName: StatusItemController.combinedAutosaveName,
-                                    label: "AirStats system statistics") {
+                                    label: L10n.s("AirStats system statistics")) {
                 hosted = [entry]
             }
 
@@ -134,7 +134,7 @@ public final class StatusItemController {
             let built = configs.reversed().compactMap { config in
                 makeItem(readout: config.id,
                          autosaveName: StatusItemController.autosaveName(for: config.id),
-                         label: "AirStats \(config.metric.label)")
+                         label: L10n.format("AirStats %@", config.metric.label))
             }
             hosted = built.reversed()
 

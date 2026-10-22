@@ -82,7 +82,7 @@ struct PanelCoreRow: View {
                 .fixedSize()
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(loads.count) \(label)")
+        .accessibilityLabel(Text(label))
         .accessibilityValue(busy.map { formatter.percent($0) } ?? "")
     }
 }
@@ -185,7 +185,7 @@ struct PanelDetailEntry: Identifiable, Equatable {
     var value: String
 
     init(_ label: String, _ value: String) {
-        self.label = label
+        self.label = L10n.s(label)
         self.value = value
     }
 }

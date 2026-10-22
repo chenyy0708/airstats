@@ -260,8 +260,8 @@ public final class NetworkCollector: MetricSource {
         // the measurement. Otherwise a missing rate means no usable baseline, not zero.
         guard countedInterfaces == 0 || ratedInterfaces > 0 else {
             guard !rebaseline else { return .failure(.pending) }
-            return .failure(.failed(String(
-                format: "no usable sampling interval (elapsed %.4fs)", context.elapsed)))
+            return .failure(.failed(L10n.format(
+                "no usable sampling interval (elapsed %.4fs)", context.elapsed)))
         }
 
         sessionIn += deltaIn
@@ -558,21 +558,21 @@ public final class NetworkCollector: MetricSource {
     }
 
     private func classify(_ link: Link) -> (type: ConnectionType, displayName: String) {
-        if link.flags & IFF_LOOPBACK != 0 { return (.loopback, "Loopback") }
+        if link.flags & IFF_LOOPBACK != 0 { return (.loopback, L10n.s("Loopback")) }
         if let port = hardwarePorts[link.name] { return (port.type, port.displayName) }
         if link.name == wifiInterfaceName { return (.wifi, "Wi-Fi") }
 
         let name = link.name
         if name.hasPrefix("utun") || name.hasPrefix("ipsec") || name.hasPrefix("ppp")
             || name.hasPrefix("tun") || name.hasPrefix("tap") {
-            return (.vpn, "Tunnel (\(name))")
+            return (.vpn, L10n.format("Tunnel (%@)", name))
         }
         if name.hasPrefix("awdl") { return (.other, "AirDrop") }
-        if name.hasPrefix("llw") { return (.other, "Low Latency WLAN") }
-        if name.hasPrefix("anpi") { return (.other, "Apple Network Processor") }
-        if name.hasPrefix("ap") { return (.other, "Personal Hotspot") }
-        if name.hasPrefix("bridge") { return (.ethernet, "Bridge (\(name))") }
-        if name.hasPrefix("gif") || name.hasPrefix("stf") { return (.other, "Transition Tunnel") }
+        if name.hasPrefix("llw") { return (.other, L10n.s("Low Latency WLAN")) }
+        if name.hasPrefix("anpi") { return (.other, L10n.s("Apple Network Processor")) }
+        if name.hasPrefix("ap") { return (.other, L10n.s("Personal Hotspot")) }
+        if name.hasPrefix("bridge") { return (.ethernet, L10n.format("Bridge (%@)", name)) }
+        if name.hasPrefix("gif") || name.hasPrefix("stf") { return (.other, L10n.s("Transition Tunnel")) }
         if name.hasPrefix("en") || name.hasPrefix("eth") { return (.ethernet, name) }
         return (.other, name)
     }
@@ -671,22 +671,22 @@ public final class NetworkCollector: MetricSource {
 
     private static func securityLabel(_ security: CWSecurity) -> String? {
         switch security {
-        case .none: return "Open"
+        case .none: return L10n.s("Open")
         case .WEP: return "WEP"
-        case .wpaPersonal: return "WPA Personal"
-        case .wpaPersonalMixed: return "WPA/WPA2 Personal"
-        case .wpa2Personal: return "WPA2 Personal"
-        case .personal: return "Personal"
-        case .dynamicWEP: return "Dynamic WEP"
-        case .wpaEnterprise: return "WPA Enterprise"
-        case .wpaEnterpriseMixed: return "WPA/WPA2 Enterprise"
-        case .wpa2Enterprise: return "WPA2 Enterprise"
-        case .enterprise: return "Enterprise"
-        case .wpa3Personal: return "WPA3 Personal"
-        case .wpa3Enterprise: return "WPA3 Enterprise"
-        case .wpa3Transition: return "WPA2/WPA3 Transition"
-        case .OWE: return "Enhanced Open"
-        case .oweTransition: return "Enhanced Open Transition"
+        case .wpaPersonal: return L10n.s("WPA Personal")
+        case .wpaPersonalMixed: return L10n.s("WPA/WPA2 Personal")
+        case .wpa2Personal: return L10n.s("WPA2 Personal")
+        case .personal: return L10n.s("Personal")
+        case .dynamicWEP: return L10n.s("Dynamic WEP")
+        case .wpaEnterprise: return L10n.s("WPA Enterprise")
+        case .wpaEnterpriseMixed: return L10n.s("WPA/WPA2 Enterprise")
+        case .wpa2Enterprise: return L10n.s("WPA2 Enterprise")
+        case .enterprise: return L10n.s("Enterprise")
+        case .wpa3Personal: return L10n.s("WPA3 Personal")
+        case .wpa3Enterprise: return L10n.s("WPA3 Enterprise")
+        case .wpa3Transition: return L10n.s("WPA2/WPA3 Transition")
+        case .OWE: return L10n.s("Enhanced Open")
+        case .oweTransition: return L10n.s("Enhanced Open Transition")
         case .unknown: return nil
         @unknown default: return nil
         }

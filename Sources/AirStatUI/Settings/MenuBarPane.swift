@@ -42,9 +42,7 @@ struct MenuBarPane: View {
             } header: {
                 Text("Layout")
             } footer: {
-                Text("One item keeps the readouts together and in order. Separate items "
-                     + "can be rearranged among your other menu bar icons, and macOS "
-                     + "hides them one at a time when the bar runs out of room.")
+                Text(L10n.s("One item keeps the readouts together and in order. Separate items can be rearranged among your other menu bar icons, and macOS hides them one at a time when the bar runs out of room."))
                 .font(.callout)
                 .foregroundStyle(Design.Palette.secondaryText)
             }
@@ -93,9 +91,9 @@ struct MenuBarPane: View {
                 .labelsHidden()
                 .disabled(isLastEnabled(item))
                 .help(isLastEnabled(item)
-                      ? "At least one readout must stay visible so the menu bar item remains clickable."
-                      : "Show \(item.metric.label) in the menu bar")
-                .accessibilityLabel("Show \(item.metric.label)")
+                      ? L10n.s("At least one readout must stay visible so the menu bar item remains clickable.")
+                      : L10n.format("Show %@ in the menu bar", item.metric.label))
+                .accessibilityLabel(Text(L10n.format("Show %@", item.metric.label)))
 
             RowMenu(title: item.metric.label,
                     width: Self.metricColumn,
@@ -132,8 +130,8 @@ struct MenuBarPane: View {
             // list of the same metrics doing the same job.
             RowIconButton(systemName: "trash",
                           help: items.count <= 1
-                              ? "The last readout cannot be removed."
-                              : "Remove \(item.metric.label) from the menu bar",
+                              ? L10n.s("The last readout cannot be removed.")
+                              : L10n.format("Remove %@ from the menu bar", item.metric.label),
                           label: "Remove \(item.metric.label)") {
                 remove(item)
             }
@@ -141,7 +139,9 @@ struct MenuBarPane: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(item.metric.label)
-        .accessibilityValue("\(item.isEnabled ? "Shown" : "Hidden"), \(item.style.label) style")
+        .accessibilityValue(L10n.format("%@, %@ style",
+                                       item.isEnabled ? L10n.s("Shown") : L10n.s("Hidden"),
+                                       item.style.label))
     }
 
     /// The style popup, carrying the caption toggle with it.
@@ -182,7 +182,7 @@ struct MenuBarPane: View {
                         // a readout this machine cannot serve may work on the next.
                         Text(availability.note(for: metric) == nil
                              ? metric.label
-                             : "\(metric.label) (unavailable here)")
+                             : L10n.format("%@ (unavailable here)", metric.label))
                     }
                 }
             } label: {
@@ -202,10 +202,10 @@ struct MenuBarPane: View {
     private func captionToggleTitle(for item: MenuBarItemConfig) -> String {
         if item.style == .bar {
             let label = MenuBarRenderModel.sideCaptionText(for: item.metric) ?? item.metric.label
-            return "Show \"\(label)\" beside the bar"
+            return L10n.format("Show \"%@\" beside the bar", label)
         }
         let label = MenuBarRenderModel.captionText(for: item.metric) ?? item.metric.label
-        return "Show \"\(label)\" above the value"
+        return L10n.format("Show \"%@\" above the value", label)
     }
 
     // MARK: Model access

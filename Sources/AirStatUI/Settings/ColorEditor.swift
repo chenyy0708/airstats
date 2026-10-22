@@ -206,8 +206,9 @@ struct ColorEditor: View {
         .frame(height: Self.squareHeight)
         .accessibilityElement()
         .accessibilityLabel("Saturation and brightness")
-        .accessibilityValue("\(percent(hsb.saturation)) saturation, "
-                            + "\(percent(hsb.brightness)) brightness")
+        .accessibilityValue(L10n.format("%lld percent saturation, %lld percent brightness",
+                                        Int64((hsb.saturation * 100).rounded()),
+                                        Int64((hsb.brightness * 100).rounded())))
         .accessibilityAdjustableAction { direction in
             hsb.brightness += direction == .increment ? 0.05 : -0.05
         }
@@ -275,7 +276,7 @@ struct ColorEditor: View {
         .frame(height: Self.hueKnob)
         .accessibilityElement()
         .accessibilityLabel("Hue")
-        .accessibilityValue("\(Int((hsb.hue * 360).rounded())) degrees")
+        .accessibilityValue(L10n.format("%lld degrees", Int64((hsb.hue * 360).rounded())))
         .accessibilityAdjustableAction { direction in
             hsb.hue = ((hsb.hue + (direction == .increment ? 1 : -1) / 36) + 1)
                 .truncatingRemainder(dividingBy: 1)
@@ -334,9 +335,5 @@ struct ColorEditor: View {
         .foregroundStyle(Design.Palette.secondaryText)
         .help("Pick a colour from anywhere on screen")
         .accessibilityLabel("Pick a colour from the screen")
-    }
-
-    private func percent(_ value: Double) -> String {
-        "\(Int((value * 100).rounded())) percent"
     }
 }

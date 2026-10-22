@@ -163,14 +163,14 @@ final class AppCoordinator {
 
     private func showContextMenu() {
         let menu = NSMenu()
-        menu.addItem(withTitle: "Settings…", action: #selector(menuShowSettings), keyEquivalent: ",")
+        menu.addItem(withTitle: L10n.s("Settings…"), action: #selector(menuShowSettings), keyEquivalent: ",")
             .target = self
-        let desktopWidgetItem = menu.addItem(withTitle: "Show Desktop Widget",
+        let desktopWidgetItem = menu.addItem(withTitle: L10n.s("Show Desktop Widget"),
                                        action: #selector(menuToggleDesktopWidget), keyEquivalent: "")
         desktopWidgetItem.target = self
         desktopWidgetItem.state = settingsStore.settings.desktopWidget.isEnabled ? .on : .off
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Quit AirStats", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        menu.addItem(withTitle: L10n.s("Quit AirStats"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         statusItem.presentMenu(menu)
     }
 

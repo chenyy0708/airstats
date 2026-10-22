@@ -68,7 +68,7 @@ public final class CPUCollector: MetricSource {
         var infoCount: mach_msg_type_number_t = 0
         let result = host_processor_info(host, PROCESSOR_CPU_LOAD_INFO, &coreCount, &info, &infoCount)
         guard result == KERN_SUCCESS, let info, coreCount > 0 else {
-            return .failure(.failed("host_processor_info: \(machMessage(result))"))
+            return .failure(.failed(L10n.format("host_processor_info: %@", machMessage(result))))
         }
 
         let wanted = Int(coreCount) * Self.stateCount
@@ -151,7 +151,7 @@ public final class CPUCollector: MetricSource {
         }
 
         guard let processes = processCount(), let threads = threadCount() else {
-            return .failure(.failed("proc_listpids failed: \(errnoMessage())"))
+            return .failure(.failed(L10n.format("proc_listpids failed: %@", errnoMessage())))
         }
 
         return .value(CPUSnapshot(

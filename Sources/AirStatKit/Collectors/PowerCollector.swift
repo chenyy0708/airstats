@@ -334,15 +334,15 @@ public final class PowerCollector: MetricSource {
         // A non-empty health condition is already a user-facing string
         // ("Check Battery", "Permanent Battery Failure") and outranks everything else.
         if let condition = source?[kIOPSBatteryHealthConditionKey] as? String, !condition.isEmpty {
-            return condition
+            return L10n.s(condition)
         }
         if let failure = (number("PermanentFailureStatus") ?? packNumber("PermanentFailureStatus"))?.intValue,
            failure != 0 {
-            return kIOPSPermanentFailureValue
+            return L10n.s(kIOPSPermanentFailureValue)
         }
         switch source?[kIOPSBatteryHealthKey] as? String {
-        case kIOPSGoodValue: return "Normal"
-        case kIOPSFairValue, kIOPSPoorValue: return "Service Recommended"
+        case kIOPSGoodValue: return L10n.s("Normal")
+        case kIOPSFairValue, kIOPSPoorValue: return L10n.s("Service Recommended")
         default: return nil
         }
     }

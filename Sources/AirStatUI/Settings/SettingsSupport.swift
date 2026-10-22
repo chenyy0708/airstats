@@ -26,13 +26,13 @@ public enum SettingsTab: String, CaseIterable, Identifiable, Sendable {
 
     public var label: String {
         switch self {
-        case .general: return "General"
-        case .menuBar: return "Menu Bar"
-        case .appearance: return "Appearance"
-        case .desktopWidget: return "Desktop Widget"
-        case .notifications: return "Notifications"
-        case .shortcuts: return "Shortcuts"
-        case .about: return "About"
+        case .general: return L10n.s("General")
+        case .menuBar: return L10n.s("Menu Bar")
+        case .appearance: return L10n.s("Appearance")
+        case .desktopWidget: return L10n.s("Desktop Widget")
+        case .notifications: return L10n.s("Notifications")
+        case .shortcuts: return L10n.s("Shortcuts")
+        case .about: return L10n.s("About")
         }
     }
 
@@ -161,27 +161,27 @@ struct MetricAvailability {
         case .cpuFrequency:
             // No public API reports Apple Silicon core frequency, so this readout
             // cannot work on any current Mac.
-            return "macOS does not report core frequency on Apple Silicon."
+            return L10n.s("macOS does not report core frequency on Apple Silicon.")
         case .cpuTemperature:
             guard let thermal = snapshot.thermal.value else { return nil }
             if thermal.cpuCelsius == nil {
-                return thermal.sensorsUnavailableReason ?? "No readable CPU temperature sensor."
+                return L10n.s(thermal.sensorsUnavailableReason ?? "No readable CPU temperature sensor.")
             }
         case .fanSpeed:
             if let thermal = snapshot.thermal.value, thermal.fans.isEmpty {
-                return "This Mac has no fans."
+                return L10n.s("This Mac has no fans.")
             }
         case .battery, .batteryTime:
             if let power = snapshot.power.value, power.percentage == nil {
-                return "This Mac has no battery."
+                return L10n.s("This Mac has no battery.")
             }
         case .systemPower:
             if let power = snapshot.power.value, power.systemWatts == nil {
-                return "This Mac does not report system power draw."
+                return L10n.s("This Mac does not report system power draw.")
             }
         case .gpuUsage:
             if let gpu = snapshot.gpu.value, gpu.primary?.utilization == nil {
-                return "No GPU utilisation source on this Mac."
+                return L10n.s("No GPU utilisation source on this Mac.")
             }
         default:
             return nil
@@ -251,7 +251,7 @@ struct SettingsSlider: View {
     let format: (Double) -> String
 
     var body: some View {
-        LabeledContent(title) {
+        LabeledContent(L10n.s(title)) {
             HStack(spacing: Design.Space.l) {
                 Slider(value: value, in: range) {
                     EmptyView()
@@ -317,16 +317,16 @@ struct RestoreDefaultsButton: View {
 
     var body: some View {
         Button("Restore Defaults") { isConfirming = true }
-            .confirmationDialog("Restore \(title) settings to their defaults?",
+            .confirmationDialog(Text(L10n.format("Restore %@ settings to their defaults?", title)),
                                 isPresented: $isConfirming) {
                 Button("Restore Defaults", role: .destructive) {
                     for section in sections { settings.resetSection(section) }
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Only \(title) is affected. Other settings are left alone.")
+                Text(L10n.format("Only %@ is affected. Other settings are left alone.", title))
             }
-            .accessibilityHint("Restores \(title) to its default values")
+            .accessibilityHint(Text(L10n.format("Restores %@ to its default values", title)))
     }
 }
 
@@ -343,11 +343,16 @@ struct RestoreDefaultsButton: View {
 /// nothing there.
 struct GlassBackdrop: View {
     var body: some View {
+        // macOS 26 上系统弹出框本身已是 Liquid Glass。该分支要 macOS 26 SDK 才编得过。
+        #if compiler(>=6.2)
         if #available(macOS 26.0, *) {
             Color.clear
         } else {
             LegacyGlassBackdrop()
         }
+        #else
+        LegacyGlassBackdrop()
+        #endif
     }
 }
 
@@ -366,7 +371,7 @@ private struct LegacyGlassBackdrop: NSViewRepresentable {
 struct SettingsFootnote: View {
     private let text: String
 
-    init(_ text: String) { self.text = text }
+    init(_ text: String) { self.text = L10n.s(text) }
 
     var body: some View {
         Text(text)
@@ -386,7 +391,7 @@ struct SettingsFootnote: View {
 struct SettingsCaution: View {
     private let text: String
 
-    init(_ text: String) { self.text = text }
+    init(_ text: String) { self.text = L10n.s(text) }
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: Design.Space.s) {
@@ -397,7 +402,7 @@ struct SettingsCaution: View {
         }
         .font(.callout)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Warning. \(text)")
+        .accessibilityLabel(Text(L10n.format("Warning. %@", text)))
     }
 }
 
@@ -482,12 +487,12 @@ struct ReorderControls: View {
     var body: some View {
         HStack(spacing: Design.Space.xxs) {
             RowIconButton(systemName: "chevron.up",
-                          help: "Move \(itemLabel) up",
-                          label: "Move \(itemLabel) up") { move(-1) }
+                          help: L10n.format("Move %@ up", itemLabel),
+                          label: L10n.format("Move %@ up", itemLabel)) { move(-1) }
                 .disabled(!canMoveUp)
             RowIconButton(systemName: "chevron.down",
-                          help: "Move \(itemLabel) down",
-                          label: "Move \(itemLabel) down") { move(1) }
+                          help: L10n.format("Move %@ down", itemLabel),
+                          label: L10n.format("Move %@ down", itemLabel)) { move(1) }
                 .disabled(!canMoveDown)
         }
     }
@@ -608,21 +613,23 @@ struct RowIconButton: View {
 enum SettingsLabels {
 
     static func interval(_ seconds: TimeInterval) -> String {
-        if seconds < 1 { return "\(Int(seconds * 1000)) ms" }
-        if seconds == 1 { return "1 second" }
-        return "\(Int(seconds)) seconds"
+        if seconds < 1 { return L10n.format("%lld ms", Int64(seconds * 1000)) }
+        if seconds == 1 { return L10n.s("1 second") }
+        return L10n.format("%lld seconds", Int64(seconds))
     }
 
     static func duration(_ seconds: TimeInterval) -> String {
-        if seconds <= 0 { return "Immediately" }
-        if seconds < 60 { return "\(Int(seconds)) seconds" }
+        if seconds <= 0 { return L10n.s("Immediately") }
+        if seconds < 60 { return L10n.format("%lld seconds", Int64(seconds)) }
         let minutes = Int(seconds / 60)
-        if minutes < 60 { return minutes == 1 ? "1 minute" : "\(minutes) minutes" }
+        if minutes < 60 {
+            return minutes == 1 ? L10n.s("1 minute") : L10n.format("%lld minutes", Int64(minutes))
+        }
         let hours = Int(seconds / 3600)
-        return hours == 1 ? "1 hour" : "\(hours) hours"
+        return hours == 1 ? L10n.s("1 hour") : L10n.format("%lld hours", Int64(hours))
     }
 
-    static func points(_ value: Double) -> String { "\(Int(value.rounded())) pt" }
+    static func points(_ value: Double) -> String { L10n.format("%lld pt", Int64(value.rounded())) }
 
     static func percent(_ fraction: Double) -> String { "\(Int((fraction * 100).rounded()))%" }
 }
@@ -748,8 +755,8 @@ struct MenuBarPreviewStrip: View {
     }
 
     private var accessibilityValue: String {
-        if isEmpty { return "No readouts enabled" }
+        if isEmpty { return L10n.s("No readouts enabled") }
         guard isTruncated else { return model.accessibilityDescription }
-        return model.accessibilityDescription + ". Scroll the preview to see the rest"
+        return L10n.format("%@. Scroll the preview to see the rest", model.accessibilityDescription)
     }
 }

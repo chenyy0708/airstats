@@ -56,7 +56,7 @@ public final class SettingsWindowController: NSObject, NSWindowDelegate {
             window?.title = tab.label
         }
         window.delegate = self
-        window.title = "AirStats Settings"
+        window.title = L10n.s("AirStats Settings")
         window.styleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
         window.isReleasedWhenClosed = false
 
@@ -249,7 +249,7 @@ struct SettingsRootView: View {
                     // and nothing happened when VoiceOver activated them.
                     .accessibilityLabel(item.label)
                     .accessibilityAddTraits(item == tab ? [.isSelected, .isButton] : .isButton)
-                    .accessibilityHint("Show \(item.label) settings")
+                    .accessibilityHint(L10n.format("Show %@ settings", item.label))
                 }
             }
             .padding(Design.Space.m)

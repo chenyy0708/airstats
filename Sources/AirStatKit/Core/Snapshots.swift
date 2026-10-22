@@ -83,9 +83,9 @@ public enum MemoryPressureLevel: Int, Sendable, Equatable, Hashable, Codable, Co
 
     public var label: String {
         switch self {
-        case .normal: return "Normal"
-        case .warning: return "Warning"
-        case .critical: return "Critical"
+        case .normal: return L10n.s("Normal")
+        case .warning: return L10n.s("Warning")
+        case .critical: return L10n.s("Critical")
         }
     }
 }
@@ -185,7 +185,7 @@ public struct GPUDevice: Sendable, Equatable, Hashable, Identifiable {
     }
 
     /// What to call this device's memory in the UI.
-    public var memoryLabel: String { hasUnifiedMemory ? "Memory" : "VRAM" }
+    public var memoryLabel: String { hasUnifiedMemory ? L10n.s("Memory") : L10n.s("VRAM") }
 }
 
 public struct GPUSnapshot: Sendable, Equatable {
@@ -212,12 +212,12 @@ public enum ConnectionType: String, Sendable, Equatable, Hashable, Codable {
     public var label: String {
         switch self {
         case .wifi: return "Wi-Fi"
-        case .ethernet: return "Ethernet"
-        case .cellular: return "Cellular"
+        case .ethernet: return L10n.s("Ethernet")
+        case .cellular: return L10n.s("Cellular")
         case .vpn: return "VPN"
-        case .loopback: return "Loopback"
-        case .other: return "Other"
-        case .none: return "Offline"
+        case .loopback: return L10n.s("Loopback")
+        case .other: return L10n.s("Other")
+        case .none: return L10n.s("Offline")
         }
     }
 }
@@ -512,10 +512,10 @@ public enum ThermalPressure: Int, Sendable, Equatable, Hashable, Codable, Compar
 
     public var label: String {
         switch self {
-        case .nominal: return "Nominal"
-        case .fair: return "Fair"
-        case .serious: return "Serious"
-        case .critical: return "Critical"
+        case .nominal: return L10n.s("Nominal")
+        case .fair: return L10n.s("Fair")
+        case .serious: return L10n.s("Serious")
+        case .critical: return L10n.s("Critical")
         }
     }
 }
@@ -591,11 +591,11 @@ public enum ProcessSortKey: String, Sendable, Equatable, Hashable, Codable, Case
     public var label: String {
         switch self {
         case .cpu: return "CPU"
-        case .memory: return "Memory"
-        case .energy: return "Energy"
-        case .diskIO: return "Disk"
-        case .networkIO: return "Network"
-        case .name: return "Name"
+        case .memory: return L10n.s("Memory")
+        case .energy: return L10n.s("Energy")
+        case .diskIO: return L10n.s("Disk")
+        case .networkIO: return L10n.s("Network")
+        case .name: return L10n.s("Name")
         case .pid: return "PID"
         }
     }

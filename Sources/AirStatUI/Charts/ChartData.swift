@@ -313,44 +313,45 @@ public enum ChartCaption {
 
     /// "last 5 min" — the context without which a chart is decoration rather than data.
     public static func window(_ span: TimeInterval) -> String {
-        guard span > 0 else { return "no history" }
-        if span < 90 { return "last \(Int(span.rounded()))s" }
-        if span < 5_400 { return "last \(Int((span / 60).rounded())) min" }
+        guard span > 0 else { return L10n.s("no history") }
+        if span < 90 { return L10n.format("last %llds", Int64(span.rounded())) }
+        if span < 5_400 { return L10n.format("last %lld min", Int64((span / 60).rounded())) }
         let hours = span / 3_600
-        return "last \(hours < 9.95 ? String(format: "%.1f", hours) : String(Int(hours.rounded())))h"
+        if hours < 9.95 { return L10n.format("last %.1fh", hours) }
+        return L10n.format("last %lldh", Int64(hours.rounded()))
     }
 
     /// The spoken form of a chart: everything the picture conveys, in one sentence.
     public static func accessibilitySummary(_ series: [ChartSeries],
                                             scale: ChartScale,
                                             formatter: MetricFormatter) -> String {
-        guard let first = series.first else { return "No data" }
+        guard let first = series.first else { return L10n.s("No data") }
         guard !first.stats.isEmpty else {
-            return "No history yet, \(ChartCaption.window(first.span))"
+            return L10n.format("No history yet, %@", ChartCaption.window(first.span))
         }
         var parts: [String] = []
         for s in series {
             let stats = s.stats
             let current = stats.last.map { s.string($0, using: formatter) } ?? MetricFormatter.unavailable
-            var sentence = "\(s.label): now \(current)"
+            var sentence = L10n.format("%@: now %@", s.label, current)
             if stats.supportsTrend {
-                sentence += ", average \(s.string(stats.average, using: formatter))"
-                sentence += ", range \(s.string(stats.minimum, using: formatter))"
-                sentence += " to \(s.string(stats.maximum, using: formatter))"
+                sentence += L10n.format(", average %@", s.string(stats.average, using: formatter))
+                sentence += L10n.format(", range %@", s.string(stats.minimum, using: formatter))
+                sentence += L10n.format(" to %@", s.string(stats.maximum, using: formatter))
             }
             parts.append(sentence)
         }
-        var summary = parts.joined(separator: ". ")
-        summary += ". Over \(ChartCaption.window(first.span))"
+        var summary = parts.joined(separator: L10n.s(". "))
+        summary += L10n.format(". Over %@", ChartCaption.window(first.span))
         if scale.isDerived {
-            summary += ", scaled to a peak of \(first.string(scale.peak, using: formatter))"
+            summary += L10n.format(", scaled to a peak of %@", first.string(scale.peak, using: formatter))
         } else if scale.isExplicit, scale.lowerBound != 0 {
-            summary += ", plotted from \(first.string(scale.lowerBound, using: formatter))"
-                + " to \(first.string(scale.upperBound, using: formatter))"
+            summary += L10n.format(", plotted from %@", first.string(scale.lowerBound, using: formatter))
+            summary += L10n.format(" to %@", first.string(scale.upperBound, using: formatter))
         }
         if !first.stats.supportsTrend {
-            summary += ". Too few samples to show a trend"
+            summary += L10n.s(". Too few samples to show a trend")
         }
-        return summary + "."
+        return summary + L10n.s(".")
     }
 }

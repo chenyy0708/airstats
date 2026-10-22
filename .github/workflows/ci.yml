@@ -7,10 +7,38 @@ on:
 
 jobs:
   build-and-test:
-    # The panel and settings draw Liquid Glass, which needs the macOS 26 SDK.
+    # 与发布包同一套 SDK，测试和渲染也走 Liquid Glass 编译路径。
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
+
+      - name: Select Xcode 26
+        run: |
+          set -euo pipefail
+          python3 - << 'PY'
+          import plistlib, subprocess, sys
+          from pathlib import Path
+
+          chosen = None
+          chosen_ver = ()
+          for app in sorted(Path("/Applications").glob("Xcode*.app")):
+              plist = app / "Contents/Info.plist"
+              if not plist.exists():
+                  continue
+              with plist.open("rb") as handle:
+                  ver = str(plistlib.load(handle).get("CFBundleShortVersionString", "0"))
+              parts = tuple(int(p) for p in ver.split(".") if p.isdigit())
+              print(f"found {app} {ver}")
+              if parts >= (26,) and parts > chosen_ver:
+                  chosen, chosen_ver = app, parts
+          if chosen is None:
+              sys.exit("error: this runner has no Xcode 26")
+          subprocess.check_call(["sudo", "xcode-select", "-s", str(chosen)])
+          print(f"selected {chosen}")
+          PY
+          xcodebuild -version
+          swift --version
+          xcrun --sdk macosx --show-sdk-version
 
       - name: Build
         run: swift build

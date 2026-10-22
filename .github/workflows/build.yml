@@ -1,0 +1,91 @@
+name: Build macOS app
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-app:
+    name: Build AirStats.app
+    # 这一版要编进 Liquid Glass，必须用 macOS 26 SDK。选不到 Xcode 26 时直接失败，
+    # 避免静默落到材质回退。源码里的 `#if compiler(>=6.2)` 仍保留给更早的 SDK。
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 26
+        run: |
+          set -euo pipefail
+          python3 - << 'PY'
+          import plistlib, subprocess, sys
+          from pathlib import Path
+
+          apps = sorted(Path("/Applications").glob("Xcode*.app"))
+          chosen = None
+          chosen_ver = ()
+          for app in apps:
+              plist = app / "Contents/Info.plist"
+              if not plist.exists():
+                  continue
+              with plist.open("rb") as handle:
+                  info = plistlib.load(handle)
+              ver = str(info.get("CFBundleShortVersionString", "0"))
+              parts = tuple(int(p) for p in ver.split(".") if p.isdigit())
+              print(f"found {app} {ver}")
+              if parts >= (26,) and parts > chosen_ver:
+                  chosen, chosen_ver = app, parts
+          if chosen is None:
+              sys.exit("error: this runner has no Xcode 26")
+          subprocess.check_call(["sudo", "xcode-select", "-s", str(chosen)])
+          print(f"selected {chosen} {'.'.join(map(str, chosen_ver))}")
+          PY
+          xcodebuild -version
+          swift --version
+          sdk="$(xcrun --sdk macosx --show-sdk-version)"
+          echo "macos sdk $sdk"
+          python3 - "$sdk" << 'PY'
+          import subprocess, sys
+          sdk = tuple(int(p) for p in sys.argv[1].split(".") if p.isdigit())
+          if sdk < (26,):
+              sys.exit(f"error: macOS SDK {sys.argv[1]} is older than 26")
+          line = subprocess.check_output(["swift", "--version"], text=True)
+          ver = next(w for w in line.split() if w[0].isdigit())
+          parts = tuple(int(p) for p in ver.split(".") if p.isdigit())
+          if parts < (6, 2):
+              sys.exit(f"error: Swift {ver} is below 6.2, so glassEffect would be compiled out")
+          print(f"Liquid Glass compile path enabled: Swift {ver}, SDK {sys.argv[1]}")
+          PY
+
+      - name: Assemble release app
+        run: Scripts/build.sh release
+
+      - name: Package app
+        run: |
+          BIN="$(swift build -c release --show-bin-path)"
+          APP="$BIN/AirStats.app"
+          test -d "$APP"
+          test -d "$APP/Contents/Resources/zh-Hans.lproj"
+          test -d "$APP/Contents/Resources/en.lproj"
+          # WindowGlassView 继承 NSGlassEffectView。符号不在二进制里说明 #if compiler(>=6.2) 没走到。
+          if ! nm "$APP/Contents/MacOS/AirStats" | grep -q NSGlassEffectView \
+            && ! strings "$APP/Contents/MacOS/AirStats" | grep -q NSGlassEffectView; then
+            echo "error: NSGlassEffectView is absent; Liquid Glass was not compiled in"
+            exit 1
+          fi
+          echo "Liquid Glass linked: NSGlassEffectView"
+          ditto -c -k --keepParent "$APP" AirStats-macos.zip
+          hdiutil create -volname AirStats -srcfolder "$APP" -ov -format UDZO AirStats-macos.dmg
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AirStats-macos-app
+          path: AirStats-macos.zip
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AirStats-macos-dmg
+          path: AirStats-macos.dmg
+          if-no-files-found: error

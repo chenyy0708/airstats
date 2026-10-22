@@ -194,7 +194,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
         var unavailable = true
         // Named, not a bare "unavailable": VoiceOver reads the whole item as one string,
         // and three anonymous "unavailable"s in a row say nothing about what is missing.
-        var accessibilityValue = "\(metric.label) unavailable"
+        var accessibilityValue = L10n.format("%@ unavailable", metric.label)
         // Set only by the two-number metrics; its presence is what makes the readout
         // stack rather than run on.
         var secondary: MenuBarLine?
@@ -211,7 +211,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
                 valueText = formatter.percent(busy)
                 unavailable = false
                 level = busy
-                accessibilityValue = "CPU \(valueText)"
+                accessibilityValue = L10n.format("CPU %@", valueText)
             }
             seriesKey = .cpuTotal
 
@@ -219,7 +219,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
             if let temp = snapshot.thermal.value?.cpuCelsius {
                 valueText = formatter.temperature(temp)
                 unavailable = false
-                accessibilityValue = "CPU temperature \(valueText)"
+                accessibilityValue = L10n.format("CPU temperature %@", valueText)
             }
             seriesKey = .cpuTemperature
 
@@ -232,7 +232,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
                 valueText = formatter.percent(mem.usedFraction)
                 unavailable = false
                 level = mem.usedFraction
-                accessibilityValue = "Memory \(valueText)"
+                accessibilityValue = L10n.format("Memory %@", valueText)
             }
             seriesKey = .memoryUsed
 
@@ -241,7 +241,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
                 valueText = formatter.percent(mem.pressureFraction)
                 unavailable = false
                 level = mem.pressureFraction
-                accessibilityValue = "Memory pressure \(valueText)"
+                accessibilityValue = L10n.format("Memory pressure %@", valueText)
             }
             seriesKey = .memoryPressure
 
@@ -250,7 +250,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
                 valueText = formatter.percent(util)
                 unavailable = false
                 level = util
-                accessibilityValue = "GPU \(valueText)"
+                accessibilityValue = L10n.format("GPU %@", valueText)
             }
             seriesKey = .gpuUtilization
 
@@ -269,8 +269,10 @@ public struct MenuBarRenderModel: Equatable, Sendable {
                 valueText = formatter.networkRate(net.downloadBytesPerSecond, compact: true)
                 uploadText = formatter.networkRate(net.uploadBytesPerSecond, compact: true)
                 unavailable = false
-                accessibilityValue = "Network down \(formatter.networkRate(net.downloadBytesPerSecond)), "
-                    + "up \(formatter.networkRate(net.uploadBytesPerSecond))"
+                accessibilityValue = L10n.format(
+                    "Network down %@, up %@",
+                    formatter.networkRate(net.downloadBytesPerSecond),
+                    formatter.networkRate(net.uploadBytesPerSecond))
                 let online = net.connectionType != .none
                 networkStatus = .init(
                     isOnline: online,
@@ -278,7 +280,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
                                                           history, .networkDownload),
                     isSending: online && recentlyActive(net.uploadBytesPerSecond,
                                                         history, .networkUpload))
-                if !online { accessibilityValue = "Network offline" }
+                if !online { accessibilityValue = L10n.s("Network offline") }
             }
             // Down and up share one scale so the two stacked graphs are comparable;
             // normalising each to its own peak would make a trickle of upload look
@@ -297,7 +299,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
             if let net = snapshot.network.value {
                 valueText = formatter.networkRate(net.uploadBytesPerSecond)
                 unavailable = false
-                accessibilityValue = "Network upload \(valueText)"
+                accessibilityValue = L10n.format("Network upload %@", valueText)
             }
             seriesKey = .networkUpload
 
@@ -305,7 +307,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
             if let net = snapshot.network.value {
                 valueText = formatter.networkRate(net.downloadBytesPerSecond)
                 unavailable = false
-                accessibilityValue = "Network download \(valueText)"
+                accessibilityValue = L10n.format("Network download %@", valueText)
             }
             seriesKey = .networkDownload
 
@@ -316,8 +318,10 @@ public struct MenuBarRenderModel: Equatable, Sendable {
                 valueText = formatter.diskRate(disk.readBytesPerSecond, compact: true)
                 writeText = formatter.diskRate(disk.writeBytesPerSecond, compact: true)
                 unavailable = false
-                accessibilityValue = "Disk read \(formatter.diskRate(disk.readBytesPerSecond)), "
-                    + "write \(formatter.diskRate(disk.writeBytesPerSecond))"
+                accessibilityValue = L10n.format(
+                    "Disk read %@, write %@",
+                    formatter.diskRate(disk.readBytesPerSecond),
+                    formatter.diskRate(disk.writeBytesPerSecond))
             }
             let pair = jointlyNormalized(history, .diskRead, .diskWrite)
             secondary = MenuBarLine(glyph: "W", valueText: writeText,
@@ -333,7 +337,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
             if let root = snapshot.disk.value?.rootVolume {
                 valueText = formatter.storage(root.availableBytes)
                 unavailable = false
-                accessibilityValue = "Disk free \(valueText)"
+                accessibilityValue = L10n.format("Disk free %@", valueText)
             }
 
         case .battery:
@@ -350,11 +354,11 @@ public struct MenuBarRenderModel: Equatable, Sendable {
                 // The indicator style takes the digits off the screen, so this is the
                 // only place the exact charge is still stated. It says everything the
                 // shape says: the number, that power is going in, that it is low.
-                accessibilityValue = "Battery \(valueText)"
+                accessibilityValue = L10n.format("Battery %@", valueText)
                 if power.isCharging {
-                    accessibilityValue += ", charging"
+                    accessibilityValue += L10n.s(", charging")
                 } else if isLow {
-                    accessibilityValue += ", low"
+                    accessibilityValue += L10n.s(", low")
                 }
             }
             seriesKey = .batteryPercent
@@ -365,7 +369,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
                 if let remaining {
                     valueText = formatter.duration(remaining)
                     unavailable = false
-                    accessibilityValue = "Battery time \(valueText)"
+                    accessibilityValue = L10n.format("Battery time %@", valueText)
                 }
             }
 
@@ -373,7 +377,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
             if let watts = snapshot.power.value?.systemWatts {
                 valueText = formatter.watts(watts)
                 unavailable = false
-                accessibilityValue = "System power \(valueText)"
+                accessibilityValue = L10n.format("System power %@", valueText)
             }
             seriesKey = .systemWatts
 
@@ -381,7 +385,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
             if let fan = snapshot.thermal.value?.fans.first {
                 valueText = formatter.rpm(fan.currentRPM)
                 unavailable = false
-                accessibilityValue = "Fan \(valueText)"
+                accessibilityValue = L10n.format("Fan %@", valueText)
             }
             seriesKey = .fanRPM
 
@@ -389,7 +393,7 @@ public struct MenuBarRenderModel: Equatable, Sendable {
             if let system = snapshot.system.value {
                 valueText = formatter.compactUptime(system.uptime)
                 unavailable = false
-                accessibilityValue = "Uptime \(valueText)"
+                accessibilityValue = L10n.format("Uptime %@", valueText)
             }
         }
 
@@ -458,35 +462,46 @@ public struct MenuBarRenderModel: Equatable, Sendable {
         return captionText(for: config.metric)
     }
 
-    /// The caption stacked beside a bar, one letter to a row. Three rows is all a
-    /// 22-point item has room for, so "PRESS" does not fit.
+    /// 竖排标注按字符逐行绘制，栏高只够三行拉丁大写。中文会叠字，所以条形样式保持缩写。
     public static func sideCaptionText(for metric: MenuBarMetric) -> String? {
         switch metric {
         case .memoryPressure: return "PRS"
-        default: return captionText(for: metric)
-        }
-    }
-
-    /// The short label a metric is captioned with. Public so the settings pane can
-    /// quote the exact string the menu bar will draw rather than describing it.
-    public static func captionText(for metric: MenuBarMetric) -> String? {
-        switch metric {
         case .cpuUsage: return "CPU"
         case .cpuTemperature: return "TEMP"
         case .cpuFrequency: return "FREQ"
         case .memoryUsage: return "MEM"
-        case .memoryPressure: return "PRESS"
         case .gpuUsage: return "GPU"
-        case .networkThroughput: return nil
+        case .networkThroughput, .diskActivity: return nil
         case .networkUpload: return "NET ↑"
         case .networkDownload: return "NET ↓"
-        case .diskActivity: return nil
         case .diskFree: return "FREE"
         case .battery: return "BATT"
         case .batteryTime: return "LEFT"
         case .systemPower: return "PWR"
         case .fanSpeed: return "FAN"
         case .uptime: return "UP"
+        }
+    }
+
+    /// 横排菜单栏标题。公开出来是为了让设置页引用菜单栏上真正会画出的字符串。
+    public static func captionText(for metric: MenuBarMetric) -> String? {
+        switch metric {
+        case .cpuUsage: return "CPU"
+        case .cpuTemperature: return L10n.s("TEMP")
+        case .cpuFrequency: return L10n.s("FREQ")
+        case .memoryUsage: return L10n.s("MEM")
+        case .memoryPressure: return L10n.s("PRESS")
+        case .gpuUsage: return "GPU"
+        case .networkThroughput: return nil
+        case .networkUpload: return L10n.s("NET ↑")
+        case .networkDownload: return L10n.s("NET ↓")
+        case .diskActivity: return nil
+        case .diskFree: return L10n.s("FREE")
+        case .battery: return L10n.s("BATT")
+        case .batteryTime: return L10n.s("LEFT")
+        case .systemPower: return L10n.s("PWR")
+        case .fanSpeed: return L10n.s("FAN")
+        case .uptime: return L10n.s("UP")
         }
     }
 
