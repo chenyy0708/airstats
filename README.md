@@ -31,7 +31,7 @@ Mac 的首选语言是简体中文时，菜单栏、设置、面板、提醒和�
 
 ### 从 GitHub Actions 下载构建
 
-工作流名称是 **Build macOS app**，运行器是 `macos-15`。`macos-26` 的托管运行器经常排不上队，作业会在还没编译时被取消。Liquid Glass（`glassEffect` / `NSGlassEffectView`）只在 macOS 26 SDK 里才有；用更早的 SDK 编译时走原来的毛玻璃材质，简体中文不受影响。本机用 Xcode 26 构建仍会编进 Liquid Glass。最低系统版本仍是 macOS 14。
+工作流名称是 **Build macOS app**，运行器是 `macos-26`，并会选中 Xcode 26，从而编进 Liquid Glass。`#if compiler(>=6.2)` 仍在：更早的 SDK（例如本机的 Xcode 16）会改用原来的毛玻璃材质，简体中文两种构建都在。最低系统版本仍是 macOS 14。`macos-26` 托管运行器偶尔排不上队，作业会在还没编译时被取消；打开那次运行点 **Re-run jobs** 即可。
 
 1. 打开这个仓库的 [Actions](https://github.com/chenyy0708/airstats/actions) 页。
 2. 左侧选择 **Build macOS app**。
@@ -68,7 +68,7 @@ those can be turned off in General settings.
 
 ## Build from source
 
-You need Xcode 16 or later (Swift 6). Liquid Glass is compiled only with the macOS 26 SDK; earlier SDKs keep the material backdrop. GitHub Actions builds on `macos-15` for the same reason.
+You need Xcode 16 or later (Swift 6). Liquid Glass is compiled only with the macOS 26 SDK (`#if compiler(>=6.2)`); earlier SDKs keep the material backdrop. The GitHub Actions app build runs on `macos-26` and selects Xcode 26.
 
 ```sh
 Scripts/build.sh release
